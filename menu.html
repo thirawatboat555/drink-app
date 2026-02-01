@@ -3,59 +3,78 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
 <title>ร้านเครื่องดื่ม</title>
 
 <style>
 body{
-    font-family: Arial;
+    font-family:sans-serif;
     background:#f2f2f2;
     margin:0;
     padding-bottom:110px;
 }
 h2{text-align:center;padding:12px}
 
-.menu{padding:10px}
-
 .item{
-    background:#fff;
-    border-radius:16px;
+    background:white;
+    border-radius:18px;
     padding:12px;
-    margin-bottom:10px;
-    box-shadow:0 2px 5px rgba(0,0,0,.1);
-}
-
-.row{
+    margin:12px;
+    box-shadow:0 2px 6px rgba(0,0,0,.1);
     display:flex;
-    justify-content:space-between;
-    align-items:center;
+    gap:12px;
 }
 
-.types button{
-    margin:6px 6px 0 0;
-    padding:6px 12px;
-    border-radius:10px;
-    border:1px solid #aaa;
-    background:#fff;
+.item img{
+    width:80px;
+    height:80px;
+    border-radius:14px;
+    object-fit:cover;
 }
 
-.types button.active{
+.info{
+    flex:1;
+}
+
+.price{
+    font-weight:bold;
+}
+
+.slider{
+    display:flex;
+    background:#eee;
+    border-radius:14px;
+    overflow:hidden;
+    margin-top:8px;
+}
+
+.slider button{
+    flex:1;
+    border:none;
+    padding:6px;
+    background:none;
+}
+
+.slider button.active{
     background:#2f80ed;
-    color:#fff;
+    color:white;
 }
 
-.types button:disabled{
+.slider button:disabled{
     opacity:.4;
 }
 
-.add-btn{
+.add{
+    margin-top:8px;
+    width:100%;
     background:#2f80ed;
     color:white;
     border:none;
-    padding:6px 12px;
-    border-radius:10px;
+    padding:8px;
+    border-radius:14px;
 }
 
-.cart-bar{
+.cart{
     position:fixed;
     bottom:0;
     width:100%;
@@ -71,10 +90,10 @@ h2{text-align:center;padding:12px}
 <body>
 
 <h2>ร้านเครื่องดื่ม</h2>
-<div class="menu" id="menu"></div>
+<div id="menu"></div>
 
-<div class="cart-bar">
-🧺 ตะกร้า (<span id="count">0</span>) | รวม <span id="total">0</span> บาท 포함
+<div class="cart">
+🧺 <span id="count">0</span> แก้ว | รวม <span id="total">0</span> บาท
 </div>
 
 <script>
@@ -82,65 +101,78 @@ h2{text-align:center;padding:12px}
 let count=0,total=0;
 
 const drinks=[
-["ชาเขียว",25],["ชาไทย",25],["ชาดำเย็น",25],
-["โอเลี้ยง",25],["โอเลี้ยบยกล้อ",25],
-["กาแฟเนส",25],["กาแฟดำ",25],
-["เผือก",25],["แคนตาลูป",25],
-["โอวัลติน",25],["นมสด",25],
-["โอริโอ้นมสด",30],
-["โกโก้",25],["แดงโซดา",25],
-["แดงโซดามะนาว",25],
-["เขียวโซดา",25],["เขียวโซดามะนาว",25],
-["บลูฮาวาย",25],["บลูฮาวายโซดา",25],
-["แอปเบิ้ลเขียว",25],["แอปเบิ้ลเขียวโซดา",25],
-["มะพร้าว",25],["มะพร้าวนมสด",25],
-["สตอเบอรี่",25],["สตอเบอรี่โซดา",25]
+["ชาเขียว",25,"https://picsum.photos/200?1"],
+["ชาไทย",25,"https://picsum.photos/200?2"],
+["ชาดำเย็น",25,"https://picsum.photos/200?3"],
+["โอเลี้ยง",25,"https://picsum.photos/200?4"],
+["โอเลี้ยบยกล้อ",25,"https://picsum.photos/200?5"],
+["กาแฟเนส",25,"https://picsum.photos/200?6"],
+["กาแฟดำ",25,"https://picsum.photos/200?7"],
+["เผือก",25,"https://picsum.photos/200?8"],
+["แคนตาลูป",25,"https://picsum.photos/200?9"],
+["โอวัลติน",25,"https://picsum.photos/200?10"],
+["นมสด",25,"https://picsum.photos/200?11"],
+["โอริโอ้นมสด",30,"https://picsum.photos/200?12"],
+["โกโก้",25,"https://picsum.photos/200?13"],
+["แดงโซดา",25,"https://picsum.photos/200?14"],
+["แดงโซดามะนาว",25,"https://picsum.photos/200?15"],
+["เขียวโซดา",25,"https://picsum.photos/200?16"],
+["เขียวโซดามะนาว",25,"https://picsum.photos/200?17"],
+["บลูฮาวาย",25,"https://picsum.photos/200?18"],
+["บลูฮาวายโซดา",25,"https://picsum.photos/200?19"],
+["แอปเบิ้ลเขียว",25,"https://picsum.photos/200?20"],
+["แอปเบิ้ลเขียวโซดา",25,"https://picsum.photos/200?21"],
+["มะพร้าว",25,"https://picsum.photos/200?22"],
+["มะพร้าวนมสด",25,"https://picsum.photos/200?23"],
+["สตอเบอรี่",25,"https://picsum.photos/200?24"],
+["สตอเบอรี่โซดา",25,"https://picsum.photos/200?25"]
 ];
 
 const menu=document.getElementById("menu");
 
 drinks.forEach(d=>{
-    const isOreo = d[0]==="โอริโอ้นมสด";
+    const isOreo=d[0]==="โอริโอ้นมสด";
     let extra=0;
 
-    const div=document.createElement("div");
-    div.className="item";
+    const box=document.createElement("div");
+    box.className="item";
 
-    div.innerHTML=`
-    <div class="row">
-        <b>${d[0]}</b>
-        ${d[1]} บาท
-        <button class="add-btn">เพิ่ม</button>
-    </div>
+    box.innerHTML=`
+    <img src="${d[2]}">
+    <div class="info">
+        <div><b>${d[0]}</b></div>
+        <div class="price">${d[1]} บาท</div>
 
-    <div class="types">
-        <button class="active" ${isOreo?"disabled":""}>เย็น</button>
-        <button ${isOreo?"disabled":""}>แยกน้ำ</button>
-        <button ${isOreo?"disabled":""}>ปั่น +5</button>
+        <div class="slider">
+            <button class="active" ${isOreo?"disabled":""}>เย็น</button>
+            <button ${isOreo?"disabled":""}>แยกน้ำ</button>
+            <button ${isOreo?"disabled":""}>ปั่น +5</button>
+        </div>
+
+        <button class="add">เพิ่มลงตะกร้า</button>
     </div>
     `;
 
-    const typeBtns = div.querySelectorAll(".types button");
-    const addBtn = div.querySelector(".add-btn");
+    const btns=box.querySelectorAll(".slider button");
+    const add=box.querySelector(".add");
 
-    typeBtns.forEach((btn,i)=>{
-        btn.onclick=()=>{
+    btns.forEach((b,i)=>{
+        b.onclick=()=>{
             if(isOreo) return;
 
-            typeBtns.forEach(b=>b.classList.remove("active"));
-            btn.classList.add("active");
-
+            btns.forEach(x=>x.classList.remove("active"));
+            b.classList.add("active");
             extra = i===2 ? 5 : 0;
         };
     });
 
-    addBtn.onclick=()=>{
+    add.onclick=()=>{
         count++;
-        total += d[1] + (isOreo ? 0 : extra);
+        total += d[1] + (isOreo?0:extra);
         update();
     };
 
-    menu.appendChild(div);
+    menu.appendChild(box);
 });
 
 function update(){
