@@ -12,34 +12,79 @@ margin:0;
 font-family:sans-serif;
 background:#f2f2f2;
 padding-top:55px;
-padding-bottom:80px;
+padding-bottom:20px;
 }
 
-/* ===== SMALL HEADER ===== */
+/* HEADER */
 .header{
 position:fixed;
 top:0;
 left:0;
 right:0;
-z-index:1000;
 background:linear-gradient(135deg,#43a047,#8bc34a);
 color:white;
 text-align:center;
-padding:6px 6px;
-box-shadow:0 3px 6px rgba(0,0,0,.25);
-}
-
-.header h1{
-margin:0;
+padding:6px;
 font-size:14px;
+z-index:1000;
 }
 
-.header small{
-font-size:10px;
-opacity:.9;
+/* CART FLOAT */
+.cart-box{
+position:fixed;
+top:8px;
+right:8px;
+background:white;
+width:180px;
+max-height:70vh;
+overflow:auto;
+border-radius:14px;
+box-shadow:0 4px 10px rgba(0,0,0,.25);
+padding:8px;
+font-size:12px;
+z-index:1200;
 }
 
-/* ===== MENU ===== */
+.cart-title{
+font-weight:bold;
+text-align:center;
+margin-bottom:4px;
+}
+
+.cart-item{
+display:flex;
+align-items:center;
+justify-content:space-between;
+margin:4px 0;
+}
+
+.cart-item span{
+flex:1;
+white-space:nowrap;
+overflow:hidden;
+text-overflow:ellipsis;
+}
+
+.qty{
+display:flex;
+gap:4px;
+}
+
+.qty button{
+border:none;
+background:#4CAF50;
+color:white;
+border-radius:6px;
+padding:2px 6px;
+font-size:12px;
+cursor:pointer;
+}
+
+.qty button.minus{
+background:#e53935;
+}
+
+/* MENU */
 .card{
 background:white;
 margin:10px;
@@ -59,7 +104,6 @@ cursor:pointer;
 width:60px;
 height:60px;
 border-radius:10px;
-object-fit:cover;
 }
 
 .menu div{
@@ -72,10 +116,9 @@ font-size:14px;
 display:none;
 padding:10px;
 border-top:1px solid #ddd;
-font-size:13px;
+font-size:12px;
 }
 
-/* ===== SELECT SMALL ===== */
 .block{
 border:1px solid #aaa;
 padding:5px 10px;
@@ -83,7 +126,6 @@ border-radius:14px;
 margin:3px;
 display:inline-block;
 cursor:pointer;
-font-size:12px;
 }
 
 .block.active{
@@ -97,46 +139,29 @@ opacity:.4;
 pointer-events:none;
 }
 
-/* ===== BUTTON ===== */
-button{
+button.add{
 width:100%;
-padding:10px;
+padding:8px;
 border:none;
 border-radius:12px;
 background:#2196F3;
 color:white;
-font-size:14px;
-margin-top:8px;
-}
-
-/* ===== CART ===== */
-.cart{
-position:fixed;
-bottom:0;
-left:0;
-right:0;
-background:black;
-color:white;
-text-align:center;
-padding:12px;
-font-size:16px;
-z-index:1000;
+margin-top:6px;
+font-size:13px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="header">
-<h1>ร้านริมทุ่ง</h1>
-<small>สดชื่นทุกแก้ว</small>
+<div class="header">ร้านริมทุ่ง</div>
+
+<div class="cart-box">
+<div class="cart-title">🧺 ตะกร้า</div>
+<div id="cartList"></div>
 </div>
 
 <div id="list"></div>
-
-<div class="cart" onclick="showCart()">
-🧺 ตะกร้า (<span id="count">0</span>)
-</div>
 
 <script>
 const menus=[
@@ -154,12 +179,10 @@ const menus=[
 ["สตอเบอรี่",25],["สตอเบอรี่โซดา",25]
 ];
 
-const sweets=[
-"0% ไม่หวาน","25% หวานน้อย","50% หวานกลาง",
-"75% หวานค่อนข้างหวาน","100% หวานปกติ","125% หวานมาก"
-];
+const sweets=["0%","25%","50%","75%","100%","125%"];
 
-let cart=[];
+let cart={};
+
 const list=document.getElementById("list");
 
 menus.forEach(m=>{
@@ -167,7 +190,7 @@ const oreo=m[0]==="โอริโอ้นมสดปั่น";
 
 list.innerHTML+=`
 <div class="card">
-<div class="menu" onclick="toggleMenu(this)">
+<div class="menu" onclick="toggle(this)">
 <img src="https://picsum.photos/200?${Math.random()}">
 <div><b>${m[0]}</b><br>${m[1]} บาท</div>
 </div>
@@ -175,77 +198,68 @@ list.innerHTML+=`
 <div class="panel">
 <b>ความหวาน</b><br>
 ${sweets.map(s=>`<span class="block sweet" onclick="pick(this,'sweet')">${s}</span>`).join("")}
-
 <br><br><b>ชนิด</b><br>
 <span class="block type" onclick="pick(this,'type')">เย็น</span>
 <span class="block type ${oreo?'disabled':''}" onclick="pick(this,'type')">แยกน้ำ</span>
-<span class="block type ${oreo?'disabled':''}" onclick="pick(this,'type')">ปั่น +5</span>
+<span class="block type ${oreo?'disabled':''}" onclick="pick(this,'type')">ปั่น</span>
 
-<button onclick="addItem(this,'${m[0]}',${m[1]})">เพิ่ม</button>
+<button class="add" onclick="addItem(this,'${m[0]}')">เพิ่ม</button>
 </div>
 </div>`;
 });
 
-function reset(p){
-p.querySelectorAll(".block").forEach(b=>{
-if(!b.classList.contains("disabled")) b.classList.remove("active");
-});
-}
-
-function toggleMenu(menu){
+function toggle(menu){
 document.querySelectorAll(".panel").forEach(p=>{
 if(p!==menu.nextElementSibling){
-reset(p);
 p.style.display="none";
+p.querySelectorAll(".block").forEach(b=>b.classList.remove("active"));
 }
 });
-
-const panel=menu.nextElementSibling;
-
-if(panel.style.display==="block"){
-reset(panel);
-panel.style.display="none";
-return;
-}
-
-panel.style.display="block";
-
-const h=document.querySelector(".header").offsetHeight;
-const y=menu.getBoundingClientRect().top+window.pageYOffset-h-6;
-
-window.scrollTo({top:y,behavior:"smooth"});
+menu.nextElementSibling.style.display=
+menu.nextElementSibling.style.display==="block"?"none":"block";
 }
 
 function pick(el,type){
 if(el.classList.contains("disabled")) return;
-
-const panel=el.closest(".panel");
-
+const p=el.closest(".panel");
 if(el.classList.contains("active")){
-el.classList.remove("active");
-return;
+el.classList.remove("active"); return;
 }
-
-panel.querySelectorAll("."+type).forEach(b=>b.classList.remove("active"));
+p.querySelectorAll("."+type).forEach(b=>b.classList.remove("active"));
 el.classList.add("active");
 }
 
-function addItem(btn,name,price){
-const panel=btn.parentElement;
-const sweet=panel.querySelector(".sweet.active");
-const type=panel.querySelector(".type.active");
+function addItem(btn,name){
+const p=btn.parentElement;
+if(!p.querySelector(".sweet.active")||!p.querySelector(".type.active")) return;
 
-if(!sweet||!type) return;
+cart[name]=(cart[name]||0)+1;
+renderCart();
 
-cart.push({name,price});
-document.getElementById("count").innerText=cart.length;
-
-reset(panel);
-panel.style.display="none";
+p.style.display="none";
+p.querySelectorAll(".block").forEach(b=>b.classList.remove("active"));
 }
 
-function showCart(){
-alert("มีสินค้า "+cart.length+" แก้ว");
+function renderCart(){
+const box=document.getElementById("cartList");
+box.innerHTML="";
+
+Object.keys(cart).forEach(n=>{
+box.innerHTML+=`
+<div class="cart-item">
+<span>${n}</span>
+<div class="qty">
+<button class="minus" onclick="change('${n}',-1)">➖</button>
+<button onclick="change('${n}',1)">➕</button>
+</div>
+</div>`;
+});
+}
+
+function change(name,val){
+cart[name]+=val;
+if(cart[name]<=0) delete cart[name];
+renderCart();
 }
 </script>
 
