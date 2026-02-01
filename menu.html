@@ -2,17 +2,67 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>ร้านเครื่องดื่ม</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>ร้านริมทุ่ง</title>
 
 <style>
-body{font-family:sans-serif;background:#f2f2f2;margin:0;padding:10px}
-.card{background:white;margin-bottom:12px;border-radius:16px;overflow:hidden}
-.menu{display:flex;align-items:center;padding:12px;cursor:pointer}
-.menu img{width:70px;height:70px;border-radius:12px;object-fit:cover}
-.menu div{margin-left:10px;flex:1}
+body{
+font-family:sans-serif;
+background:#f2f2f2;
+margin:0;
+padding-top:90px;
+}
 
-.panel{display:none;padding:12px;border-top:1px solid #ddd}
+.header{
+position:fixed;
+top:0;
+width:100%;
+background:linear-gradient(135deg,#4CAF50,#8BC34A);
+color:white;
+text-align:center;
+padding:18px 10px;
+font-size:26px;
+font-weight:bold;
+box-shadow:0 4px 8px rgba(0,0,0,.3);
+border-radius:0 0 20px 20px;
+}
+
+.sub{
+font-size:14px;
+opacity:.9;
+}
+
+.card{
+background:white;
+margin:12px;
+border-radius:16px;
+overflow:hidden;
+}
+
+.menu{
+display:flex;
+align-items:center;
+padding:12px;
+cursor:pointer;
+}
+
+.menu img{
+width:70px;
+height:70px;
+border-radius:12px;
+object-fit:cover;
+}
+
+.menu div{
+margin-left:10px;
+flex:1;
+}
+
+.panel{
+display:none;
+padding:12px;
+border-top:1px solid #ddd;
+}
 
 .block{
 border:1px solid #aaa;
@@ -21,7 +71,6 @@ border-radius:20px;
 margin:5px;
 display:inline-block;
 cursor:pointer;
-font-size:14px;
 }
 
 .block.active{
@@ -60,6 +109,11 @@ padding:12px;
 
 <body>
 
+<div class="header">
+ร้านริมทุ่ง
+<div class="sub">สั่งง่าย สดชื่นทุกแก้ว</div>
+</div>
+
 <div id="list"></div>
 
 <div class="cart" onclick="showCart()">
@@ -67,7 +121,6 @@ padding:12px;
 </div>
 
 <script>
-
 const menus=[
 ["ชาเขียว",25],["ชาไทย",25],["ชาดำเย็น",25],
 ["โอเลี้ยง",25],["โอเลี้ยงยกล้อ",25],
@@ -108,12 +161,8 @@ ${sweets.map(x=>`<span class="block sweet" onclick="pickSweet(this)">${x}</span>
 <br><br><b>ชนิด</b><br>
 
 <span class="block type" onclick="pickType(this)">เย็น</span>
-
-<span class="block type ${isOreo?'disabled':''}" 
-${isOreo?'':'onclick="pickType(this)"'}>แยกน้ำ</span>
-
-<span class="block type ${isOreo?'disabled':''}" 
-${isOreo?'':'onclick="pickType(this)"'}>ปั่น +5</span>
+<span class="block type ${isOreo?'disabled':''}" ${isOreo?'':'onclick="pickType(this)"'}>แยกน้ำ</span>
+<span class="block type ${isOreo?'disabled':''}" ${isOreo?'':'onclick="pickType(this)"'}>ปั่น +5</span>
 
 <button onclick="addItem(this,'${m[0]}',${m[1]})">เพิ่มลงตะกร้า</button>
 </div>
@@ -121,13 +170,10 @@ ${isOreo?'':'onclick="pickType(this)"'}>ปั่น +5</span>
 });
 
 function clearPanel(panel){
-panel.querySelectorAll(".block").forEach(b=>{
-b.classList.remove("active");
-});
+panel.querySelectorAll(".block").forEach(b=>b.classList.remove("active"));
 }
 
 function toggleMenu(menu){
-
 document.querySelectorAll(".panel").forEach(p=>{
 if(p!==menu.nextElementSibling){
 clearPanel(p);
@@ -148,26 +194,21 @@ menu.scrollIntoView({behavior:"smooth",block:"start"});
 
 function pickSweet(el){
 const panel=el.closest(".panel");
-
 if(el.classList.contains("active")){
 el.classList.remove("active");
 return;
 }
-
 panel.querySelectorAll(".sweet").forEach(x=>x.classList.remove("active"));
 el.classList.add("active");
 }
 
 function pickType(el){
 if(el.classList.contains("disabled")) return;
-
 const panel=el.closest(".panel");
-
 if(el.classList.contains("active")){
 el.classList.remove("active");
 return;
 }
-
 panel.querySelectorAll(".type").forEach(x=>x.classList.remove("active"));
 el.classList.add("active");
 }
@@ -184,18 +225,11 @@ return;
 
 let extra=type.innerText.includes("ปั่น")?5:0;
 
-cart.push({
-name,
-sweet:sweet.innerText,
-type:type.innerText,
-price:price+extra
-});
-
+cart.push({name,sweet:sweet.innerText,type:type.innerText,price:price+extra});
 document.getElementById("count").innerText=cart.length;
 
 clearPanel(panel);
 panel.style.display="none";
-panel.previousElementSibling.scrollIntoView({behavior:"smooth"});
 }
 
 function showCart(){
@@ -206,7 +240,7 @@ msg+=`${i.name} | ${i.sweet} | ${i.type} = ${i.price}฿\n`;
 });
 alert(msg+"\nรวม "+sum+" บาท");
 }
-
 </script>
+
 </body>
 </html>
