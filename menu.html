@@ -6,12 +6,44 @@
 <title>ร้านเครื่องดื่ม</title>
 
 <style>
-body{font-family:sans-serif;background:#f2f2f2;margin:0}
-.card{background:white;margin:10px;border-radius:15px;overflow:hidden}
-.menu{display:flex;padding:10px;align-items:center;cursor:pointer}
-.menu img{width:70px;height:70px;border-radius:12px;object-fit:cover}
-.menu div{flex:1;margin-left:10px}
-.panel{display:none;padding:10px;border-top:1px solid #ddd}
+body{
+font-family:sans-serif;
+background:#f2f2f2;
+margin:0;
+padding-bottom:80px;
+}
+
+.card{
+background:white;
+margin:10px;
+border-radius:15px;
+overflow:hidden
+}
+
+.menu{
+display:flex;
+padding:10px;
+align-items:center;
+cursor:pointer
+}
+
+.menu img{
+width:70px;
+height:70px;
+border-radius:12px;
+object-fit:cover
+}
+
+.menu div{
+flex:1;
+margin-left:10px
+}
+
+.panel{
+display:none;
+padding:10px;
+border-top:1px solid #ddd
+}
 
 .block{
 border:1px solid #aaa;
@@ -20,9 +52,13 @@ border-radius:20px;
 margin:4px;
 display:inline-block;
 cursor:pointer;
-font-size:14px}
+font-size:14px
+}
 
-.active{background:#4CAF50;color:white}
+.active{
+background:#4CAF50;
+color:white
+}
 
 .disabled{
 opacity:.4;
@@ -36,7 +72,8 @@ border:none;
 background:#2196F3;
 color:white;
 border-radius:12px;
-margin-top:10px}
+margin-top:10px
+}
 
 .cart{
 position:fixed;
@@ -45,7 +82,8 @@ width:100%;
 background:black;
 color:white;
 text-align:center;
-padding:12px}
+padding:12px
+}
 </style>
 </head>
 
@@ -75,7 +113,7 @@ let cart=[];
 const box=document.getElementById("list");
 
 menus.forEach(m=>{
- let disable = m[0]=="โอริโอ้นมสดปั่น";
+ let isOreo = m[0]=="โอริโอ้นมสดปั่น";
 
  box.innerHTML+=`
 <div class="card">
@@ -87,14 +125,14 @@ menus.forEach(m=>{
 <div class="panel">
 
 <b>ความหวาน</b><br>
-${["0%","25%","50%","75%","100%"]
+${["0% ไม่หวาน","25% หวานน้อย","50% กลาง","75%","100% ปกติ","125% หวานมาก"]
 .map(x=>`<span class="block sweet" onclick="pick(this)">${x}</span>`).join("")}
 
 <br><br><b>ชนิด</b><br>
 
-<span class="block type">เย็น</span>
-<span class="block type ${disable?'disabled':''}">แยกน้ำ</span>
-<span class="block type ${disable?'disabled':''}">ปั่น +5</span>
+<span class="block type" onclick="pick(this)">เย็น</span>
+<span class="block type ${isOreo?'disabled':''}" onclick="pick(this)">แยกน้ำ</span>
+<span class="block type ${isOreo?'disabled':''}" onclick="pick(this)">ปั่น +5</span>
 
 <button onclick="add('${m[0]}',${m[1]},this)">เพิ่มลงตะกร้า</button>
 </div>
@@ -102,9 +140,9 @@ ${["0%","25%","50%","75%","100%"]
 });
 
 function toggle(e){
- let card = e.parentElement;
- let panel = e.nextElementSibling;
- let open = panel.style.display=="block";
+ let card=e.parentElement;
+ let panel=e.nextElementSibling;
+ let open=panel.style.display=="block";
 
  document.querySelectorAll(".panel").forEach(p=>p.style.display="none");
 
@@ -119,8 +157,8 @@ function toggle(e){
 function pick(el){
  if(el.classList.contains("disabled")) return;
 
- let group = el.classList.contains("sweet")?"sweet":"type";
- let parent = el.parentElement;
+ let group=el.classList.contains("sweet")?"sweet":"type";
+ let parent=el.parentElement;
 
  parent.querySelectorAll("."+group)
  .forEach(x=>x.classList.remove("active"));
@@ -138,7 +176,7 @@ function add(name,price,b){
    return;
  }
 
- let extra = t.innerText.includes("ปั่น")?5:0;
+ let extra=t.innerText.includes("ปั่น")?5:0;
 
  cart.push({
   name,
@@ -153,8 +191,8 @@ function add(name,price,b){
 function showCart(){
  let sum=0,msg="";
  cart.forEach(i=>{
-   sum+=i.price;
-   msg+=`${i.name} ${i.sweet} ${i.type} ${i.price}฿\n`;
+  sum+=i.price;
+  msg+=`${i.name} ${i.sweet} ${i.type} ${i.price}฿\n`;
  });
  alert(msg+"\nรวม "+sum+" บาท");
 }
