@@ -6,8 +6,8 @@
 <title>ร้านเครื่องดื่ม</title>
 
 <style>
-body{font-family:sans-serif;background:#f2f2f2;margin:0}
-.card{background:#fff;margin:12px;border-radius:16px;overflow:hidden}
+body{font-family:sans-serif;background:#f2f2f2;margin:0;padding:10px}
+.card{background:white;margin-bottom:12px;border-radius:16px;overflow:hidden}
 .menu{display:flex;align-items:center;padding:12px;cursor:pointer}
 .menu img{width:70px;height:70px;border-radius:12px;object-fit:cover}
 .menu div{margin-left:10px;flex:1}
@@ -21,13 +21,13 @@ border-radius:20px;
 margin:5px;
 display:inline-block;
 cursor:pointer;
-font-size:14px
+font-size:14px;
 }
 
 .block.active{
 background:#4CAF50;
 color:white;
-border-color:#4CAF50
+border-color:#4CAF50;
 }
 
 .block.disabled{
@@ -43,7 +43,7 @@ border-radius:14px;
 background:#2196F3;
 color:white;
 font-size:16px;
-margin-top:12px
+margin-top:12px;
 }
 
 .cart{
@@ -53,7 +53,7 @@ width:100%;
 background:black;
 color:white;
 text-align:center;
-padding:12px
+padding:12px;
 }
 </style>
 </head>
@@ -96,7 +96,7 @@ const isOreo=m[0]==="โอริโอ้นมสดปั่น";
 box.innerHTML+=`
 <div class="card">
 <div class="menu" onclick="toggleMenu(this)">
-<img src="https://picsum.photos/200?${m[0]}">
+<img src="https://picsum.photos/200?${Math.random()}">
 <div><b>${m[0]}</b><br>${m[1]} บาท</div>
 </div>
 
@@ -120,15 +120,28 @@ ${isOreo?'':'onclick="pickType(this)"'}>ปั่น +5</span>
 </div>`;
 });
 
+function clearPanel(panel){
+panel.querySelectorAll(".block").forEach(b=>{
+b.classList.remove("active");
+});
+}
+
 function toggleMenu(menu){
+
 document.querySelectorAll(".panel").forEach(p=>{
-if(p!==menu.nextElementSibling) p.style.display="none";
+if(p!==menu.nextElementSibling){
+clearPanel(p);
+p.style.display="none";
+}
 });
 
 const panel=menu.nextElementSibling;
-panel.style.display=panel.style.display==="block"?"none":"block";
 
 if(panel.style.display==="block"){
+clearPanel(panel);
+panel.style.display="none";
+}else{
+panel.style.display="block";
 menu.scrollIntoView({behavior:"smooth",block:"start"});
 }
 }
@@ -159,12 +172,6 @@ panel.querySelectorAll(".type").forEach(x=>x.classList.remove("active"));
 el.classList.add("active");
 }
 
-function clearPanel(panel){
-panel.querySelectorAll(".block").forEach(b=>{
-b.classList.remove("active");
-});
-}
-
 function addItem(btn,name,price){
 const panel=btn.parentElement;
 const sweet=panel.querySelector(".sweet.active");
@@ -186,13 +193,9 @@ price:price+extra
 
 document.getElementById("count").innerText=cart.length;
 
-clearPanel(panel);        // ล้างติ๊ก
-panel.style.display="none";  // สไลด์ปิด
-
-panel.previousElementSibling.scrollIntoView({
-behavior:"smooth",
-block:"start"
-});
+clearPanel(panel);
+panel.style.display="none";
+panel.previousElementSibling.scrollIntoView({behavior:"smooth"});
 }
 
 function showCart(){
