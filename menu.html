@@ -2,59 +2,152 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<title>เมนูเครื่องดื่ม</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ร้านเครื่องดื่ม</title>
+
 <style>
-body { font-family: Arial; }
-.menu { border:1px solid #ccc; padding:10px; margin:8px; }
-.disabled { color:#aaa; }
+body{
+    font-family: Arial;
+    background:#f2f2f2;
+    margin:0;
+    padding-bottom:110px;
+}
+h2{text-align:center;padding:12px}
+
+.menu{padding:10px}
+
+.item{
+    background:#fff;
+    border-radius:16px;
+    padding:12px;
+    margin-bottom:10px;
+    box-shadow:0 2px 5px rgba(0,0,0,.1);
+}
+
+.row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.types button{
+    margin:6px 6px 0 0;
+    padding:6px 12px;
+    border-radius:10px;
+    border:1px solid #aaa;
+    background:#fff;
+}
+
+.types button.active{
+    background:#2f80ed;
+    color:#fff;
+}
+
+.types button:disabled{
+    opacity:.4;
+}
+
+.add-btn{
+    background:#2f80ed;
+    color:white;
+    border:none;
+    padding:6px 12px;
+    border-radius:10px;
+}
+
+.cart-bar{
+    position:fixed;
+    bottom:0;
+    width:100%;
+    background:black;
+    color:white;
+    text-align:center;
+    padding:15px;
+    font-size:18px;
+}
 </style>
 </head>
+
 <body>
 
-<h2>เมนูน้ำ</h2>
-<div id="menu"></div>
+<h2>ร้านเครื่องดื่ม</h2>
+<div class="menu" id="menu"></div>
+
+<div class="cart-bar">
+🧺 ตะกร้า (<span id="count">0</span>) | รวม <span id="total">0</span> บาท 포함
+</div>
 
 <script>
-const drinks = [
- ["ชาเขียว",25], ["ชาไทย",25], ["ชาดำเย็น",25],
- ["โอเลี้ยง",25], ["โอเลี้ยงยกล้อ",25],
- ["กาแฟเนส",25], ["กาแฟดำ",25],
- ["เผือก",25], ["แคนตาลูป",25],
- ["โอวัลติน",25], ["นมสด",25],
- ["โอริโอ้นมสด",30],
- ["โกโก้",25],
- ["แดงโซดา",25], ["แดงโซดามะนาว",25],
- ["เขียวโซดา",25], ["เขียวโซดามะนาว",25],
- ["บลูฮาวาย",25], ["บลูฮาวายโซดา",25],
- ["แอปเปิ้ลเขียว",25], ["แอปเปิ้ลเขียวโซดา",25],
- ["มะพร้าว",25], ["มะพร้าวนมสด",25],
- ["สตรอเบอรี่",25], ["สตรอเบอรี่โซดา",25]
+
+let count=0,total=0;
+
+const drinks=[
+["ชาเขียว",25],["ชาไทย",25],["ชาดำเย็น",25],
+["โอเลี้ยง",25],["โอเลี้ยบยกล้อ",25],
+["กาแฟเนส",25],["กาแฟดำ",25],
+["เผือก",25],["แคนตาลูป",25],
+["โอวัลติน",25],["นมสด",25],
+["โอริโอ้นมสด",30],
+["โกโก้",25],["แดงโซดา",25],
+["แดงโซดามะนาว",25],
+["เขียวโซดา",25],["เขียวโซดามะนาว",25],
+["บลูฮาวาย",25],["บลูฮาวายโซดา",25],
+["แอปเบิ้ลเขียว",25],["แอปเบิ้ลเขียวโซดา",25],
+["มะพร้าว",25],["มะพร้าวนมสด",25],
+["สตอเบอรี่",25],["สตอเบอรี่โซดา",25]
 ];
 
-const box = document.getElementById("menu");
+const menu=document.getElementById("menu");
 
-drinks.forEach(d => {
-  const isOreo = d[0] === "โอริโอ้นมสด";
+drinks.forEach(d=>{
+    const isOreo = d[0]==="โอริโอ้นมสด";
+    let extra=0;
 
-  box.innerHTML += `
-  <div class="menu">
-    <b>${d[0]} ${d[1]} บาท</b><br>
+    const div=document.createElement("div");
+    div.className="item";
 
-    <label><input type="radio" name="${d[0]}" checked> ปกติ</label>
-    <label><input type="radio" name="${d[0]}"> เย็น</label>
+    div.innerHTML=`
+    <div class="row">
+        <b>${d[0]}</b>
+        ${d[1]} บาท
+        <button class="add-btn">เพิ่ม</button>
+    </div>
 
-    <label class="${isOreo ? "disabled":""}">
-      <input type="radio" name="${d[0]}" ${isOreo?"disabled":""}>
-      ปั่น (+5)
-    </label>
+    <div class="types">
+        <button class="active" ${isOreo?"disabled":""}>เย็น</button>
+        <button ${isOreo?"disabled":""}>แยกน้ำ</button>
+        <button ${isOreo?"disabled":""}>ปั่น +5</button>
+    </div>
+    `;
 
-    <label class="${isOreo ? "disabled":""}">
-      <input type="radio" name="${d[0]}" ${isOreo?"disabled":""}>
-      แยกน้ำ
-    </label>
-  </div>`;
+    const typeBtns = div.querySelectorAll(".types button");
+    const addBtn = div.querySelector(".add-btn");
+
+    typeBtns.forEach((btn,i)=>{
+        btn.onclick=()=>{
+            if(isOreo) return;
+
+            typeBtns.forEach(b=>b.classList.remove("active"));
+            btn.classList.add("active");
+
+            extra = i===2 ? 5 : 0;
+        };
+    });
+
+    addBtn.onclick=()=>{
+        count++;
+        total += d[1] + (isOreo ? 0 : extra);
+        update();
+    };
+
+    menu.appendChild(div);
 });
-</script>
 
+function update(){
+    document.getElementById("count").innerText=count;
+    document.getElementById("total").innerText=total;
+}
+
+</script>
 </body>
 </html>
