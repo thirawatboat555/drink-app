@@ -2,95 +2,105 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>ร้านริมทุ่ง</title>
 
 <style>
 body{
 margin:0;
 font-family:sans-serif;
-background:#f4f4f4;
+background:#f3f3f3;
+padding-top:70px;
 }
 
 header{
-position:sticky;
+position:fixed;
 top:0;
+width:100%;
 background:linear-gradient(135deg,#2ecc71,#27ae60);
 color:white;
-padding:15px;
 text-align:center;
-font-size:26px;
+font-size:22px;
+padding:18px;
 font-weight:bold;
 z-index:1000;
-box-shadow:0 2px 5px rgba(0,0,0,.2);
+box-shadow:0 3px 6px rgba(0,0,0,.2);
+}
+
+.card{
+background:white;
+margin:12px;
+border-radius:16px;
+overflow:hidden;
+box-shadow:0 3px 8px rgba(0,0,0,.1);
 }
 
 .menu{
-padding:10px;
-}
-
-.item{
-background:white;
-margin-bottom:10px;
-border-radius:12px;
-overflow:hidden;
-box-shadow:0 2px 6px rgba(0,0,0,.15);
-}
-
-.item-header{
-padding:15px;
-font-size:20px;
+display:flex;
+align-items:center;
+padding:12px;
 cursor:pointer;
-background:#fff;
 }
 
-.slide{
-max-height:0;
-overflow:hidden;
-transition:.4s ease;
-padding:0 15px;
+.menu img{
+width:75px;
+height:75px;
+border-radius:12px;
+object-fit:cover;
 }
 
-.slide.active{
-max-height:400px;
-padding-bottom:15px;
+.menu div{
+margin-left:12px;
+font-size:16px;
 }
 
-.section{
+.panel{
+display:none;
+padding:12px;
+border-top:1px solid #ddd;
+}
+
+.block{
+display:inline-block;
+padding:8px 14px;
+margin:5px;
+border:1px solid #aaa;
+border-radius:20px;
+cursor:pointer;
+font-size:14px;
+}
+
+.block.active{
+background:#2ecc71;
+color:white;
+border-color:#2ecc71;
+}
+
+.block.disabled{
+opacity:.4;
+pointer-events:none;
+}
+
+button{
+width:100%;
+padding:14px;
+background:#3498db;
+border:none;
+color:white;
+border-radius:14px;
+font-size:16px;
 margin-top:10px;
 }
 
-.options{
-display:flex;
-gap:10px;
-flex-wrap:wrap;
-}
-
-.option{
-padding:10px 15px;
-border-radius:20px;
-border:2px solid #27ae60;
-color:#27ae60;
-cursor:pointer;
-transition:.2s;
-}
-
-.option.active{
-background:#27ae60;
-color:white;
-}
-
-.add{
-margin-top:15px;
+.cart{
+position:fixed;
+bottom:0;
 width:100%;
-padding:12px;
-border:none;
-border-radius:10px;
-font-size:18px;
-background:#27ae60;
+background:black;
 color:white;
-cursor:pointer;
+text-align:center;
+padding:14px;
+font-size:18px;
 }
 </style>
 </head>
@@ -99,123 +109,141 @@ cursor:pointer;
 
 <header>🌾 ร้านริมทุ่ง</header>
 
-<div class="menu">
+<div id="list"></div>
 
-<div class="item">
-<div class="item-header">🍏 แอปเปิ้ลเขียว</div>
-<div class="slide">
-<strong>ความหวาน</strong>
-<div class="options sweet">
-<div class="option">25%</div>
-<div class="option">50%</div>
-<div class="option">75%</div>
-<div class="option">100%</div>
-</div>
-
-<div class="section">
-<strong>ชนิด</strong>
-<div class="options type">
-<div class="option">ปั่น</div>
-<div class="option">แยกน้ำ</div>
-</div>
-</div>
-
-<button class="add">เพิ่มลงตะกร้า</button>
-</div>
-</div>
-
-<div class="item">
-<div class="item-header">🍫 Oreo</div>
-<div class="slide">
-<strong>ความหวาน</strong>
-<div class="options sweet">
-<div class="option">25%</div>
-<div class="option">50%</div>
-<div class="option">75%</div>
-<div class="option">100%</div>
-</div>
-
-<div class="section">
-<strong>ชนิด</strong>
-<div class="options type">
-<div class="option">ปิดปั่น</div>
-<div class="option">แยกน้ำ</div>
-</div>
-</div>
-
-<button class="add">เพิ่มลงตะกร้า</button>
-</div>
-</div>
-
-<div class="item">
-<div class="item-header">🍓 สตรอว์เบอร์รี่</div>
-<div class="slide">
-<strong>ความหวาน</strong>
-<div class="options sweet">
-<div class="option">25%</div>
-<div class="option">50%</div>
-<div class="option">75%</div>
-<div class="option">100%</div>
-</div>
-
-<div class="section">
-<strong>ชนิด</strong>
-<div class="options type">
-<div class="option">ปั่น</div>
-<div class="option">แยกน้ำ</div>
-</div>
-</div>
-
-<button class="add">เพิ่มลงตะกร้า</button>
-</div>
-</div>
-
-</div>
+<div class="cart" onclick="showCart()">🧺 ตะกร้า (<span id="count">0</span>)</div>
 
 <script>
-let openSlide = null;
+const menus = [
+["ชาเขียว",25],["ชาไทย",25],["ชาดำเย็น",25],["โอเลี้ยง",25],
+["โอเลี้ยงยกล้อ",25],["กาแฟเนส",25],["กาแฟดำ",25],["เผือก",25],
+["แคนตาลูป",25],["โอวัลติน",25],["นมสด",25],["โอริโอ้นมสดปั่น",30],
+["โกโก้",25],["แดงโซดา",25],["แดงโซดามะนาว",25],
+["เขียวโซดา",25],["เขียวโซดามะนาว",25],
+["บลูฮาวาย",25],["บลูฮาวายโซดา",25],
+["แอปเปิ้ลเขียว",25],["แอปเปิ้ลเขียวโซดา",25],
+["มะพร้าว",25],["มะพร้าวนมสด",25],
+["สตอเบอรี่",25],["สตอเบอรี่โซดา",25]
+];
 
-document.querySelectorAll('.item-header').forEach(header=>{
-header.onclick=()=>{
-let slide = header.nextElementSibling;
+const sweets=[
+"0% ไม่หวาน","25% หวานน้อย","50% หวานกลาง",
+"75% หวานค่อนข้างหวาน","100% หวานปกติ","125% หวานมาก"
+];
 
-if(openSlide && openSlide!==slide){
-reset(openSlide);
-openSlide.classList.remove('active');
-}
+const types=["เย็น","แยกน้ำ","ปั่น +5"];
 
-slide.classList.toggle('active');
-openSlide = slide.classList.contains('active') ? slide : null;
-}
+let cart=[];
+let opened=null;
+
+const box=document.getElementById("list");
+
+menus.forEach(m=>{
+box.innerHTML+=`
+<div class="card">
+<div class="menu" onclick="toggle(this,'${m[0]}')">
+<img src="https://picsum.photos/200?${m[0]}">
+<div><b>${m[0]}</b><br>${m[1]} บาท</div>
+</div>
+
+<div class="panel">
+<b>ความหวาน</b><br>
+${sweets.map(x=>`<span class="block sweet" onclick="pick(this)">${x}</span>`).join("")}
+
+<br><br><b>ชนิด</b><br>
+${types.map(x=>`<span class="block type">${x}</span>`).join("")}
+
+<button onclick="add('${m[0]}',${m[1]},this)">เพิ่มลงตะกร้า</button>
+</div>
+</div>`;
 });
 
-function setup(group){
-group.querySelectorAll('.option').forEach(opt=>{
-opt.onclick=()=>{
-opt.classList.toggle('active');
-group.querySelectorAll('.option').forEach(o=>{
-if(o!==opt) o.classList.remove('active');
+function toggle(menu,name){
+if(opened && opened!==menu.nextElementSibling){
+reset(opened);
+opened.style.display="none";
+}
+
+const panel=menu.nextElementSibling;
+
+if(panel.style.display==="block"){
+reset(panel);
+panel.style.display="none";
+opened=null;
+return;
+}
+
+panel.style.display="block";
+opened=panel;
+
+panel.scrollIntoView({behavior:"smooth",block:"start"});
+
+if(name.includes("โอริโอ้")){
+panel.querySelectorAll(".type").forEach(t=>{
+if(t.innerText!=="เย็น"){
+t.classList.add("disabled");
+}
 });
-};
+}
+}
+
+function pick(el){
+if(el.classList.contains("disabled")) return;
+
+const group=el.classList.contains("sweet")?"sweet":"type";
+const parent=el.parentElement;
+
+if(el.classList.contains("active")){
+el.classList.remove("active");
+return;
+}
+
+parent.querySelectorAll("."+group).forEach(x=>x.classList.remove("active"));
+el.classList.add("active");
+}
+
+function reset(panel){
+panel.querySelectorAll(".block").forEach(b=>{
+b.classList.remove("active","disabled");
 });
 }
 
-document.querySelectorAll('.sweet').forEach(setup);
-document.querySelectorAll('.type').forEach(setup);
+function add(name,price,btn){
+const p=btn.parentElement;
+const s=p.querySelector(".sweet.active");
+const t=p.querySelector(".type.active");
 
-function reset(slide){
-slide.querySelectorAll('.option').forEach(o=>o.classList.remove('active'));
+if(!s||!t){
+alert("เลือกความหวานและชนิดก่อน");
+return;
 }
 
-document.querySelectorAll('.add').forEach(btn=>{
-btn.onclick=()=>{
-let slide = btn.closest('.slide');
-reset(slide);
-slide.classList.remove('active');
-openSlide=null;
-};
+let extra=t.innerText.includes("ปั่น")?5:0;
+
+cart.push({
+name,
+sweet:s.innerText,
+type:t.innerText,
+price:price+extra
 });
+
+document.getElementById("count").innerText=cart.length;
+
+reset(p);
+p.style.display="none";
+opened=null;
+}
+
+function showCart(){
+let sum=0,msg="";
+cart.forEach(i=>{
+sum+=i.price;
+msg+=`${i.name} | ${i.sweet} | ${i.type} | ${i.price}฿\n`;
+});
+alert(msg+"\nรวม "+sum+" บาท");
+}
 </script>
 
 </body>
 </html>
+
