@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>QR Menu</title>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+</head>
+<body>
+
+<h2>สแกนเพื่อดูเมนู</h2>
+<div id="qrcode"></div>
+
+<script>
+new QRCode(document.getElementById("qrcode"), {
+    text: "https://ชื่อคุณ.github.io/drink-menu/menu.html",
+    width: 200,
+    height: 200
+});
+</script>
+
+</body>
+</html>
