@@ -11,10 +11,11 @@ body{
 margin:0;
 font-family:sans-serif;
 background:#f2f2f2;
-padding-top:95px;
-padding-bottom:110px;
+padding-top:55px;
+padding-bottom:80px;
 }
 
+/* ===== SMALL HEADER ===== */
 .header{
 position:fixed;
 top:0;
@@ -24,14 +25,25 @@ z-index:1000;
 background:linear-gradient(135deg,#43a047,#8bc34a);
 color:white;
 text-align:center;
-padding:16px;
-box-shadow:0 4px 8px rgba(0,0,0,.3);
+padding:6px 6px;
+box-shadow:0 3px 6px rgba(0,0,0,.25);
 }
 
+.header h1{
+margin:0;
+font-size:14px;
+}
+
+.header small{
+font-size:10px;
+opacity:.9;
+}
+
+/* ===== MENU ===== */
 .card{
 background:white;
-margin:12px;
-border-radius:16px;
+margin:10px;
+border-radius:14px;
 overflow:hidden;
 box-shadow:0 3px 6px rgba(0,0,0,.15);
 }
@@ -39,32 +51,39 @@ box-shadow:0 3px 6px rgba(0,0,0,.15);
 .menu{
 display:flex;
 align-items:center;
-padding:12px;
+padding:10px;
 cursor:pointer;
 }
 
 .menu img{
-width:70px;
-height:70px;
-border-radius:12px;
+width:60px;
+height:60px;
+border-radius:10px;
 object-fit:cover;
 }
 
-.menu div{margin-left:12px}
+.menu div{
+margin-left:10px;
+flex:1;
+font-size:14px;
+}
 
 .panel{
 display:none;
-padding:12px;
+padding:10px;
 border-top:1px solid #ddd;
+font-size:13px;
 }
 
+/* ===== SELECT SMALL ===== */
 .block{
 border:1px solid #aaa;
-padding:8px 14px;
-border-radius:20px;
-margin:5px;
+padding:5px 10px;
+border-radius:14px;
+margin:3px;
 display:inline-block;
 cursor:pointer;
+font-size:12px;
 }
 
 .block.active{
@@ -78,19 +97,20 @@ opacity:.4;
 pointer-events:none;
 }
 
+/* ===== BUTTON ===== */
 button{
 width:100%;
-padding:14px;
+padding:10px;
 border:none;
-border-radius:14px;
+border-radius:12px;
 background:#2196F3;
 color:white;
-font-size:16px;
-margin-top:12px;
+font-size:14px;
+margin-top:8px;
 }
 
-/* ===== CART BAR (ใหญ่ขึ้น 20%) ===== */
-.cart-bar{
+/* ===== CART ===== */
+.cart{
 position:fixed;
 bottom:0;
 left:0;
@@ -98,52 +118,9 @@ right:0;
 background:black;
 color:white;
 text-align:center;
-padding:18px;
-font-size:22px;
-z-index:1000;
-cursor:pointer;
-}
-
-/* ===== CART PANEL ===== */
-.cart-panel{
-position:fixed;
-bottom:-100%;
-left:0;
-right:0;
-background:white;
-border-radius:20px 20px 0 0;
-padding:16px;
-max-height:70vh;
-overflow:auto;
-transition:.3s;
-z-index:2000;
-}
-
-.cart-panel.show{bottom:0}
-
-.cart-item{
-border-bottom:1px solid #ddd;
-padding:10px 0;
-}
-
-.controls{
-display:flex;
-gap:10px;
-margin-top:6px;
-}
-
-.controls button{
-padding:6px 12px;
+padding:12px;
 font-size:16px;
-background:#4CAF50;
-border-radius:10px;
-}
-
-.total{
-font-size:20px;
-font-weight:bold;
-margin-top:12px;
-text-align:right;
+z-index:1000;
 }
 </style>
 </head>
@@ -151,27 +128,34 @@ text-align:right;
 <body>
 
 <div class="header">
-<h2>ร้านริมทุ่ง</h2>
+<h1>ร้านริมทุ่ง</h1>
 <small>สดชื่นทุกแก้ว</small>
 </div>
 
 <div id="list"></div>
 
-<div class="cart-bar" onclick="toggleCart()">
+<div class="cart" onclick="showCart()">
 🧺 ตะกร้า (<span id="count">0</span>)
 </div>
 
-<div class="cart-panel" id="cartPanel"></div>
-
 <script>
 const menus=[
-["ชาเขียว",25],["ชาไทย",25],["โอริโอ้นมสดปั่น",30],
-["โกโก้",25],["แอปเปิ้ลเขียว",25],["สตอเบอรี่",25]
+["ชาเขียว",25],["ชาไทย",25],["ชาดำเย็น",25],
+["โอเลี้ยง",25],["โอเลี้ยงยกล้อ",25],
+["กาแฟเนส",25],["กาแฟดำ",25],
+["เผือก",25],["แคนตาลูป",25],
+["โอวัลติน",25],["นมสด",25],
+["โอริโอ้นมสดปั่น",30],
+["โกโก้",25],["แดงโซดา",25],["แดงโซดามะนาว",25],
+["เขียวโซดา",25],["เขียวโซดามะนาว",25],
+["บลูฮาวาย",25],["บลูฮาวายโซดา",25],
+["แอปเปิ้ลเขียว",25],["แอปเปิ้ลเขียวโซดา",25],
+["มะพร้าว",25],["มะพร้าวนมสด",25],
+["สตอเบอรี่",25],["สตอเบอรี่โซดา",25]
 ];
 
 const sweets=[
-"0% ไม่หวาน","25% หวานน้อย","50% หวานกลาง",
-"75% หวานค่อนข้างหวาน","100% หวานปกติ","125% หวานมาก"
+"0%","25%","50%","75%","100%","125%"
 ];
 
 let cart=[];
@@ -194,9 +178,9 @@ ${sweets.map(s=>`<span class="block sweet" onclick="pick(this,'sweet')">${s}</sp
 <br><br><b>ชนิด</b><br>
 <span class="block type" onclick="pick(this,'type')">เย็น</span>
 <span class="block type ${oreo?'disabled':''}" onclick="pick(this,'type')">แยกน้ำ</span>
-<span class="block type ${oreo?'disabled':''}" onclick="pick(this,'type')">ปั่น +5</span>
+<span class="block type ${oreo?'disabled':''}" onclick="pick(this,'type')">ปั่น</span>
 
-<button onclick="addItem(this,'${m[0]}',${m[1]})">เพิ่มลงตะกร้า</button>
+<button onclick="addItem(this,'${m[0]}',${m[1]})">เพิ่ม</button>
 </div>
 </div>`;
 });
@@ -214,16 +198,26 @@ reset(p);
 p.style.display="none";
 }
 });
+
 const panel=menu.nextElementSibling;
-panel.style.display=panel.style.display==="block"?"none":"block";
+
+if(panel.style.display==="block"){
+reset(panel);
+panel.style.display="none";
+return;
+}
+
+panel.style.display="block";
 
 const h=document.querySelector(".header").offsetHeight;
-const y=menu.getBoundingClientRect().top+scrollY-h-10;
-scrollTo({top:y,behavior:"smooth"});
+const y=menu.getBoundingClientRect().top+window.pageYOffset-h-6;
+
+window.scrollTo({top:y,behavior:"smooth"});
 }
 
 function pick(el,type){
 if(el.classList.contains("disabled")) return;
+
 const panel=el.closest(".panel");
 
 if(el.classList.contains("active")){
@@ -240,59 +234,18 @@ const panel=btn.parentElement;
 const sweet=panel.querySelector(".sweet.active");
 const type=panel.querySelector(".type.active");
 
-if(!sweet||!type) return alert("เลือกให้ครบก่อน");
+if(!sweet||!type) return;
 
-let extra=type.innerText.includes("ปั่น")?5:0;
-
-const key=name+sweet.innerText+type.innerText;
-const found=cart.find(i=>i.key===key);
-
-if(found) found.qty++;
-else cart.push({key,name,sweet:sweet.innerText,type:type.innerText,price:price+extra,qty:1});
+cart.push({name,price});
+document.getElementById("count").innerText=cart.length;
 
 reset(panel);
 panel.style.display="none";
-renderCart();
 }
 
-function toggleCart(){
-document.getElementById("cartPanel").classList.toggle("show");
-renderCart();
+function showCart(){
+alert("มีสินค้า "+cart.length+" แก้ว");
 }
-
-function renderCart(){
-const box=document.getElementById("cartPanel");
-let sum=0;
-box.innerHTML="";
-
-cart.forEach((i,idx)=>{
-sum+=i.price*i.qty;
-
-box.innerHTML+=`
-<div class="cart-item">
-<b>${i.name}</b><br>
-${i.sweet} | ${i.type}<br>
-${i.price}฿ x ${i.qty}
-
-<div class="controls">
-<button onclick="plus(${idx})">+</button>
-<button onclick="minus(${idx})">-</button>
-<button onclick="removeItem(${idx})">ลบ</button>
-</div>
-</div>`;
-});
-
-box.innerHTML+=`<div class="total">รวม ${sum} บาท</div>`;
-document.getElementById("count").innerText=cart.reduce((a,b)=>a+b.qty,0);
-}
-
-function plus(i){cart[i].qty++;renderCart();}
-function minus(i){
-if(cart[i].qty>1) cart[i].qty--;
-else cart.splice(i,1);
-renderCart();
-}
-function removeItem(i){cart.splice(i,1);renderCart();}
 </script>
 
 </body>
