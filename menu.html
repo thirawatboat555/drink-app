@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>ร้านริมทุ่ง</title>
 
 <style>
@@ -10,21 +10,24 @@ body{
 font-family:sans-serif;
 background:#f2f2f2;
 margin:0;
-padding-top:90px;
+padding-top:110px;
+padding-bottom:90px;
 }
 
+/* ===== HEADER FIX ===== */
 .header{
 position:fixed;
 top:0;
-width:100%;
+left:0;
+right:0;
+z-index:999;
 background:linear-gradient(135deg,#4CAF50,#8BC34A);
 color:white;
 text-align:center;
-padding:18px 10px;
+padding:18px;
 font-size:26px;
 font-weight:bold;
 box-shadow:0 4px 8px rgba(0,0,0,.3);
-border-radius:0 0 20px 20px;
 }
 
 .sub{
@@ -32,11 +35,13 @@ font-size:14px;
 opacity:.9;
 }
 
+/* ===== MENU CARD ===== */
 .card{
 background:white;
 margin:12px;
 border-radius:16px;
 overflow:hidden;
+box-shadow:0 3px 6px rgba(0,0,0,.1);
 }
 
 .menu{
@@ -64,6 +69,7 @@ padding:12px;
 border-top:1px solid #ddd;
 }
 
+/* ===== BUTTON BLOCK ===== */
 .block{
 border:1px solid #aaa;
 padding:8px 14px;
@@ -95,14 +101,18 @@ font-size:16px;
 margin-top:12px;
 }
 
+/* ===== CART FIX ===== */
 .cart{
 position:fixed;
 bottom:0;
-width:100%;
+left:0;
+right:0;
 background:black;
 color:white;
 text-align:center;
-padding:12px;
+padding:14px;
+font-size:18px;
+z-index:999;
 }
 </style>
 </head>
@@ -156,27 +166,29 @@ box.innerHTML+=`
 <div class="panel">
 
 <b>ความหวาน</b><br>
-${sweets.map(x=>`<span class="block sweet" onclick="pickSweet(this)">${x}</span>`).join("")}
+${sweets.map(x=>`<span class="block sweet" onclick="pick(this,'sweet')">${x}</span>`).join("")}
 
 <br><br><b>ชนิด</b><br>
 
-<span class="block type" onclick="pickType(this)">เย็น</span>
-<span class="block type ${isOreo?'disabled':''}" ${isOreo?'':'onclick="pickType(this)"'}>แยกน้ำ</span>
-<span class="block type ${isOreo?'disabled':''}" ${isOreo?'':'onclick="pickType(this)"'}>ปั่น +5</span>
+<span class="block type" onclick="pick(this,'type')">เย็น</span>
+<span class="block type ${isOreo?'disabled':''}" onclick="pick(this,'type')">แยกน้ำ</span>
+<span class="block type ${isOreo?'disabled':''}" onclick="pick(this,'type')">ปั่น +5</span>
 
 <button onclick="addItem(this,'${m[0]}',${m[1]})">เพิ่มลงตะกร้า</button>
 </div>
 </div>`;
 });
 
-function clearPanel(panel){
-panel.querySelectorAll(".block").forEach(b=>b.classList.remove("active"));
+function reset(panel){
+panel.querySelectorAll(".block").forEach(b=>{
+if(!b.classList.contains("disabled")) b.classList.remove("active");
+});
 }
 
 function toggleMenu(menu){
 document.querySelectorAll(".panel").forEach(p=>{
 if(p!==menu.nextElementSibling){
-clearPanel(p);
+reset(p);
 p.style.display="none";
 }
 });
@@ -184,32 +196,25 @@ p.style.display="none";
 const panel=menu.nextElementSibling;
 
 if(panel.style.display==="block"){
-clearPanel(panel);
+reset(panel);
 panel.style.display="none";
 }else{
 panel.style.display="block";
-menu.scrollIntoView({behavior:"smooth",block:"start"});
+panel.scrollIntoView({behavior:"smooth",block:"start"});
 }
 }
 
-function pickSweet(el){
-const panel=el.closest(".panel");
-if(el.classList.contains("active")){
-el.classList.remove("active");
-return;
-}
-panel.querySelectorAll(".sweet").forEach(x=>x.classList.remove("active"));
-el.classList.add("active");
-}
-
-function pickType(el){
+function pick(el,type){
 if(el.classList.contains("disabled")) return;
+
 const panel=el.closest(".panel");
+
 if(el.classList.contains("active")){
 el.classList.remove("active");
 return;
 }
-panel.querySelectorAll(".type").forEach(x=>x.classList.remove("active"));
+
+panel.querySelectorAll("."+type).forEach(x=>x.classList.remove("active"));
 el.classList.add("active");
 }
 
@@ -225,10 +230,16 @@ return;
 
 let extra=type.innerText.includes("ปั่น")?5:0;
 
-cart.push({name,sweet:sweet.innerText,type:type.innerText,price:price+extra});
+cart.push({
+name,
+sweet:sweet.innerText,
+type:type.innerText,
+price:price+extra
+});
+
 document.getElementById("count").innerText=cart.length;
 
-clearPanel(panel);
+reset(panel);
 panel.style.display="none";
 }
 
@@ -244,3 +255,4 @@ alert(msg+"\nรวม "+sum+" บาท");
 
 </body>
 </html>
+
