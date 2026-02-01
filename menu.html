@@ -91,7 +91,7 @@ let cart=[];
 const box=document.getElementById("list");
 
 menus.forEach(m=>{
-const isOreo = m[0]==="โอริโอ้นมสดปั่น";
+const isOreo=m[0]==="โอริโอ้นมสดปั่น";
 
 box.innerHTML+=`
 <div class="card">
@@ -115,7 +115,7 @@ ${isOreo?'':'onclick="pickType(this)"'}>แยกน้ำ</span>
 <span class="block type ${isOreo?'disabled':''}" 
 ${isOreo?'':'onclick="pickType(this)"'}>ปั่น +5</span>
 
-<button onclick="add(this,'${m[0]}',${m[1]})">เพิ่มลงตะกร้า</button>
+<button onclick="addItem(this,'${m[0]}',${m[1]})">เพิ่มลงตะกร้า</button>
 </div>
 </div>`;
 });
@@ -126,7 +126,7 @@ if(p!==menu.nextElementSibling) p.style.display="none";
 });
 
 const panel=menu.nextElementSibling;
-panel.style.display = panel.style.display==="block" ? "none" : "block";
+panel.style.display=panel.style.display==="block"?"none":"block";
 
 if(panel.style.display==="block"){
 menu.scrollIntoView({behavior:"smooth",block:"start"});
@@ -159,17 +159,23 @@ panel.querySelectorAll(".type").forEach(x=>x.classList.remove("active"));
 el.classList.add("active");
 }
 
-function add(btn,name,price){
+function clearPanel(panel){
+panel.querySelectorAll(".block").forEach(b=>{
+b.classList.remove("active");
+});
+}
+
+function addItem(btn,name,price){
 const panel=btn.parentElement;
 const sweet=panel.querySelector(".sweet.active");
 const type=panel.querySelector(".type.active");
 
-if(!sweet || !type){
+if(!sweet||!type){
 alert("เลือกความหวานและชนิดก่อนครับ");
 return;
 }
 
-let extra = type.innerText.includes("ปั่น") ? 5 : 0;
+let extra=type.innerText.includes("ปั่น")?5:0;
 
 cart.push({
 name,
@@ -179,15 +185,23 @@ price:price+extra
 });
 
 document.getElementById("count").innerText=cart.length;
+
+clearPanel(panel);        // ล้างติ๊ก
+panel.style.display="none";  // สไลด์ปิด
+
+panel.previousElementSibling.scrollIntoView({
+behavior:"smooth",
+block:"start"
+});
 }
 
 function showCart(){
-let sum=0,text="";
+let sum=0,msg="";
 cart.forEach(i=>{
 sum+=i.price;
-text+=`${i.name} | ${i.sweet} | ${i.type} = ${i.price}฿\n`;
+msg+=`${i.name} | ${i.sweet} | ${i.type} = ${i.price}฿\n`;
 });
-alert(text+"\nรวม "+sum+" บาท");
+alert(msg+"\nรวม "+sum+" บาท");
 }
 
 </script>
