@@ -2,93 +2,84 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
 <title>ร้านเครื่องดื่ม</title>
 
 <style>
 body{
- font-family:sans-serif;
- background:#f2f2f2;
- margin:0;
- padding-bottom:90px;
+font-family:sans-serif;
+background:#f2f2f2;
+margin:0;
 }
 
 .card{
- background:#fff;
- margin:10px;
- border-radius:16px;
- overflow:hidden;
- box-shadow:0 2px 6px rgba(0,0,0,.08)
+background:#fff;
+margin:12px;
+border-radius:16px;
+overflow:hidden;
 }
 
 .menu{
- display:flex;
- padding:12px;
- align-items:center;
- cursor:pointer
+display:flex;
+align-items:center;
+padding:12px;
+cursor:pointer;
 }
 
 .menu img{
- width:75px;
- height:75px;
- border-radius:14px;
- object-fit:cover
+width:70px;
+height:70px;
+border-radius:12px;
+object-fit:cover;
 }
 
 .menu div{
- flex:1;
- margin-left:12px
+margin-left:10px;
+flex:1;
 }
 
 .panel{
- display:none;
- padding:12px;
- border-top:1px solid #ddd
+display:none;
+padding:12px;
+border-top:1px solid #ddd;
 }
 
 .block{
- border:1px solid #aaa;
- padding:8px 14px;
- border-radius:25px;
- margin:5px;
- display:inline-block;
- cursor:pointer;
- font-size:14px;
- transition:.15s;
- background:white;
+border:1px solid #aaa;
+padding:8px 14px;
+border-radius:20px;
+margin:5px;
+display:inline-block;
+font-size:14px;
+cursor:pointer;
 }
 
 .block.active{
- background:#4CAF50;
- color:white;
- border-color:#4CAF50;
-}
-
-.disabled{
- opacity:.4;
- pointer-events:none;
+background:#4CAF50;
+color:#fff;
+border-color:#4CAF50;
 }
 
 button{
- width:100%;
- padding:14px;
- border:none;
- background:#2196F3;
- color:white;
- border-radius:14px;
- margin-top:12px;
- font-size:16px
+width:100%;
+padding:14px;
+border:none;
+border-radius:14px;
+background:#2196F3;
+color:#fff;
+font-size:16px;
+margin-top:12px;
 }
 
 .cart{
- position:fixed;
- bottom:0;
- width:100%;
- background:#000;
- color:#fff;
- text-align:center;
- padding:14px;
- font-size:18px
+position:fixed;
+bottom:0;
+width:100%;
+background:#000;
+color:#fff;
+padding:12px;
+text-align:center;
 }
 </style>
 </head>
@@ -102,110 +93,107 @@ button{
 </div>
 
 <script>
-const menus = [
- ["ชาเขียว",25],["ชาไทย",25],["ชาดำเย็น",25],["โอเลี้ยง",25],
- ["โอเลี้ยงยกล้อ",25],["กาแฟเนส",25],["กาแฟดำ",25],["เผือก",25],
- ["แคนตาลูป",25],["โอวัลติน",25],["นมสด",25],
- ["โอริโอ้นมสดปั่น",30],
- ["โกโก้",25],["แดงโซดา",25],["แดงโซดามะนาว",25],
- ["เขียวโซดา",25],["เขียวโซดามะนาว",25],
- ["บลูฮาวาย",25],["บลูฮาวายโซดา",25],
- ["แอปเปิ้ลเขียว",25],["แอปเปิ้ลเขียวโซดา",25],
- ["มะพร้าว",25],["มะพร้าวนมสด",25],
- ["สตอเบอรี่",25],["สตอเบอรี่โซดา",25]
+
+const menus=[
+["ชาเขียว",25],["ชาไทย",25],["ชาดำเย็น",25],
+["โอเลี้ยง",25],["โอเลี้ยงยกล้อ",25],
+["กาแฟเนส",25],["กาแฟดำ",25],
+["เผือก",25],["แคนตาลูป",25],["โอวัลติน",25],
+["นมสด",25],["โอริโอ้นมสดปั่น",30],
+["โกโก้",25],["แดงโซดา",25],["แดงโซดามะนาว",25],
+["เขียวโซดา",25],["เขียวโซดามะนาว",25],
+["บลูฮาวาย",25],["บลูฮาวายโซดา",25],
+["แอปเปิ้ลเขียว",25],["แอปเปิ้ลเขียวโซดา",25],
+["มะพร้าว",25],["มะพร้าวนมสด",25],
+["สตอเบอรี่",25],["สตอเบอรี่โซดา",25]
 ];
 
-const sweetLevels=[
- "0% ไม่หวาน","25% หวานน้อย","50% หวานกลาง",
- "75% หวานค่อนข้างหวาน","100% หวานปกติ","125% หวานมาก"
+const sweetList=[
+"0% ไม่หวาน","25% หวานน้อย","50% หวานกลาง",
+"75% หวานค่อนข้างหวาน","100% หวานปกติ","125% หวานมาก"
 ];
 
 let cart=[];
 const box=document.getElementById("list");
 
 menus.forEach(m=>{
- let isOreo=m[0]=="โอริโอ้นมสดปั่น";
+box.innerHTML+=`
+<div class="card">
+<div class="menu" onclick="toggle(this)">
+<img src="https://picsum.photos/200?${m[0]}">
+<div><b>${m[0]}</b><br>${m[1]} บาท</div>
+</div>
 
- box.innerHTML+=`
- <div class="card">
-  <div class="menu" onclick="toggle(this)">
-   <img src="https://picsum.photos/200?${Math.random()}">
-   <div><b>${m[0]}</b><br>${m[1]} บาท</div>
-  </div>
+<div class="panel">
 
-  <div class="panel">
+<b>ความหวาน</b><br>
+${sweetList.map(x=>`<span class="block sweet" onclick="pickSweet(this)">${x}</span>`).join("")}
 
-   <b>ความหวาน</b><br>
-   ${sweetLevels.map(x=>`
-    <span class="block sweet" onclick="pick(this,event)">${x}</span>
-   `).join("")}
+<br><br>
+<b>ชนิด</b><br>
+<span class="block type" onclick="pickType(this)">เย็น</span>
+<span class="block type" onclick="pickType(this)">แยกน้ำ</span>
+<span class="block type" onclick="pickType(this)">ปั่น +5</span>
 
-   <br><br><b>ชนิด</b><br>
+<button onclick="add(this,'${m[0]}',${m[1]})">เพิ่มลงตะกร้า</button>
 
-   <span class="block type" onclick="pick(this,event)">เย็น</span>
-   <span class="block type ${isOreo?'disabled':''}" onclick="pick(this,event)">แยกน้ำ</span>
-   <span class="block type ${isOreo?'disabled':''}" onclick="pick(this,event)">ปั่น +5</span>
-
-   <button onclick="add('${m[0]}',${m[1]},this)">เพิ่มลงตะกร้า</button>
-  </div>
- </div>
- `;
+</div>
+</div>`;
 });
 
-function toggle(el){
- let panel=el.nextElementSibling;
- let open=panel.style.display==="block";
+function toggle(menu){
+const panel=menu.nextElementSibling;
+panel.style.display = panel.style.display==="block" ? "none":"block";
 
- document.querySelectorAll(".panel")
- .forEach(p=>p.style.display="none");
-
- if(!open){
-  panel.style.display="block";
-  setTimeout(()=>{
-   el.scrollIntoView({behavior:"smooth",block:"start"});
-  },80);
- }
+if(panel.style.display==="block"){
+menu.scrollIntoView({behavior:"smooth",block:"start"});
+}
 }
 
-function pick(el,e){
- e.stopPropagation();
- if(el.classList.contains("disabled")) return;
-
- // ติ๊กเข้า-ออกอิสระ (ไม่ล้างตัวอื่น)
- el.classList.toggle("active");
+function pickSweet(el){
+const panel=el.closest(".panel");
+panel.querySelectorAll(".sweet").forEach(x=>x.classList.remove("active"));
+el.classList.add("active");
 }
 
-function add(name,price,b){
- let p=b.parentElement;
- let s=p.querySelector(".sweet.active");
- let t=p.querySelector(".type.active");
+function pickType(el){
+const panel=el.closest(".panel");
+panel.querySelectorAll(".type").forEach(x=>x.classList.remove("active"));
+el.classList.add("active");
+}
 
- if(!s || !t){
-  alert("กรุณาเลือกความหวานและชนิดก่อน");
-  return;
- }
+function add(btn,name,price){
+const panel=btn.parentElement;
 
- let extra=t.innerText.includes("ปั่น")?5:0;
+const sweet=panel.querySelector(".sweet.active");
+const type=panel.querySelector(".type.active");
 
- cart.push({
-  name,
-  sweet:s.innerText,
-  type:t.innerText,
-  price:price+extra
- });
+if(!sweet || !type){
+alert("กรุณาเลือกความหวานและชนิดก่อน");
+return;
+}
 
- document.getElementById("count").innerText=cart.length;
+let extra = type.innerText.includes("ปั่น") ? 5 : 0;
+
+cart.push({
+name,
+sweet:sweet.innerText,
+type:type.innerText,
+price:price+extra
+});
+
+document.getElementById("count").innerText=cart.length;
 }
 
 function showCart(){
- let sum=0,msg="";
- cart.forEach(i=>{
-  sum+=i.price;
-  msg+=`${i.name} | ${i.sweet} | ${i.type} | ${i.price}฿\n`;
- });
- alert(msg+"\nรวม "+sum+" บาท");
+let sum=0,text="";
+cart.forEach(i=>{
+sum+=i.price;
+text+=`${i.name} | ${i.sweet} | ${i.type} = ${i.price}฿\n`;
+});
+alert(text+"\nรวม "+sum+" บาท");
 }
-</script>
 
+</script>
 </body>
 </html>
