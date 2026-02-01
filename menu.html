@@ -6,36 +6,37 @@
 <title>ร้านเครื่องดื่ม</title>
 
 <style>
-body{font-family:sans-serif;background:#f2f2f2;margin:0;padding-bottom:90px}
-.card{background:white;margin:10px;border-radius:16px;overflow:hidden}
-.row{display:flex;padding:12px;align-items:center}
-.row img{width:80px;height:80px;border-radius:14px;object-fit:cover}
-.row div{flex:1;margin-left:10px}
-.panel{display:none;padding:12px;border-top:1px solid #ddd}
+body{font-family:sans-serif;background:#f2f2f2;margin:0}
+.card{background:white;margin:10px;border-radius:15px;overflow:hidden}
+.menu{display:flex;padding:10px;align-items:center;cursor:pointer}
+.menu img{width:70px;height:70px;border-radius:12px;object-fit:cover}
+.menu div{flex:1;margin-left:10px}
+.panel{display:none;padding:10px;border-top:1px solid #ddd}
 
 .block{
-border:1px solid #999;
+border:1px solid #aaa;
 padding:7px 12px;
 border-radius:20px;
 margin:4px;
 display:inline-block;
-font-size:14px;
-cursor:pointer
+cursor:pointer;
+font-size:14px}
+
+.block.disabled{
+opacity:0.4;
+pointer-events:none;
 }
 
 .active{background:#4CAF50;color:white}
-.disabled{opacity:.4;cursor:not-allowed}
 
-.add{
+button{
 width:100%;
-margin-top:12px;
 padding:12px;
 border:none;
 background:#2196F3;
 color:white;
-border-radius:14px;
-font-size:16px
-}
+border-radius:12px;
+margin-top:10px}
 
 .cart{
 position:fixed;
@@ -44,26 +45,23 @@ width:100%;
 background:black;
 color:white;
 text-align:center;
-padding:14px;
-font-size:18px
-}
+padding:12px}
 </style>
 </head>
 
 <body>
 
-<div id="menu"></div>
+<div id="list"></div>
 
 <div class="cart" onclick="showCart()">
-🧺 <span id="count">0</span> แก้ว | รวม <span id="sum">0</span> บาท
+🧺 ตะกร้า (<span id="count">0</span>)
 </div>
 
 <script>
-
 const menus = [
 ["ชาเขียว",25],["ชาไทย",25],["ชาดำเย็น",25],["โอเลี้ยง",25],
-["โอเลี้ยงยกล้อ",25],["กาแฟเนส",25],["กาแฟดำ",25],
-["เผือก",25],["แคนตาลูป",25],["โอวัลติน",25],["นมสด",25],
+["โอเลี้ยงยกล้อ",25],["กาแฟเนส",25],["กาแฟดำ",25],["เผือก",25],
+["แคนตาลูป",25],["โอวัลติน",25],["นมสด",25],
 ["โอริโอ้นมสดปั่น",30],
 ["โกโก้",25],["แดงโซดา",25],["แดงโซดามะนาว",25],
 ["เขียวโซดา",25],["เขียวโซดามะนาว",25],
@@ -74,93 +72,85 @@ const menus = [
 ];
 
 let cart=[];
-
-const wrap=document.getElementById("menu");
+const box=document.getElementById("list");
 
 menus.forEach(m=>{
- const oreo = m[0]==="โอริโอ้นมสดปั่น";
+let isOreo = m[0]=="โอริโอ้นมสดปั่น";
 
- wrap.innerHTML+=`
+box.innerHTML+=`
 <div class="card">
-<div class="row" onclick="toggle(this)">
+<div class="menu" onclick="toggle(this)">
 <img src="https://picsum.photos/200?${m[0]}">
-<div>
-<b>${m[0]}</b><br>
-${m[1]} บาท
-</div>
+<div><b>${m[0]}</b><br>${m[1]} บาท</div>
 </div>
 
 <div class="panel">
 
 <b>ความหวาน</b><br>
-${["0% ไม่หวาน","25% หวานน้อย","50% กลาง","75%","100% ปกติ","125% หวานมาก"]
+${["0%","25%","50%","75%","100%","125%"]
 .map(x=>`<span class="block sweet" onclick="pick(this)">${x}</span>`).join("")}
 
 <br><br><b>ชนิด</b><br>
+<span class="block type" onclick="pick(this)">เย็น</span>
+<span class="block type ${isOreo?"disabled":""}" onclick="pick(this)">แยกน้ำ</span>
+<span class="block type ${isOreo?"disabled":""}" onclick="pick(this)">ปั่น +5</span>
 
-<span class="block type">เย็น</span>
-<span class="block type ${oreo?"disabled":""}" ${oreo?"":"onclick='pick(this)'"}>แยกน้ำ</span>
-<span class="block type ${oreo?"disabled":""}" ${oreo?"":"onclick='pick(this)'"}>ปั่น +5</span>
-
-<button class="add" onclick="add('${m[0]}',${m[1]},this,${oreo})">
-เพิ่มลงตะกร้า
-</button>
-
+<button onclick="add('${m[0]}',${m[1]},this)">เพิ่มลงตะกร้า</button>
 </div>
-</div>
-`;
+</div>`;
 });
 
 function toggle(e){
  let p=e.nextElementSibling;
- p.style.display=p.style.display=="block"?"none":"block";
+
+ document.querySelectorAll(".panel").forEach(x=>{
+   if(x!==p) x.style.display="none";
+ });
+
+ p.style.display="block";
+
+ setTimeout(()=>{
+   p.scrollIntoView({behavior:"smooth",block:"start"});
+ },100);
 }
 
 function pick(el){
- if(el.classList.contains("disabled")) return;
  let g=el.classList.contains("sweet")?"sweet":"type";
  el.parentElement.querySelectorAll("."+g)
  .forEach(x=>x.classList.remove("active"));
  el.classList.add("active");
 }
 
-function add(name,price,b,oreo){
+function add(name,price,b){
  let p=b.parentElement;
- let sweet=p.querySelector(".sweet.active");
- let type=p.querySelector(".type.active");
+ let s=p.querySelector(".sweet.active");
+ let t=p.querySelector(".type.active");
 
- if(!sweet || !type){
-  alert("กรุณาเลือกความหวานและชนิดก่อน");
-  return;
+ if(!s || !t){
+   alert("กรุณาเลือกความหวานและชนิดก่อน");
+   return;
  }
 
- let extra = (!oreo && type.innerText.includes("ปั่น")) ? 5 : 0;
+ let extra = t.innerText.includes("ปั่น") ? 5 : 0;
 
  cart.push({
-  name,
-  sweet:sweet.innerText,
-  type:type.innerText,
-  price:price+extra
+   name,
+   sweet:s.innerText,
+   type:t.innerText,
+   price:price+extra
  });
 
- update();
-}
-
-function update(){
  document.getElementById("count").innerText=cart.length;
- document.getElementById("sum").innerText=
- cart.reduce((a,b)=>a+b.price,0);
 }
 
 function showCart(){
- let txt="",sum=0;
+ let sum=0,msg="";
  cart.forEach(i=>{
-  sum+=i.price;
-  txt+=`${i.name} | ${i.sweet} | ${i.type} | ${i.price}฿\n`;
+   sum+=i.price;
+   msg+=`${i.name} ${i.sweet}% ${i.type} ${i.price}฿\n`;
  });
- alert(txt+"\nรวม "+sum+" บาท");
+ alert(msg+"\nรวม "+sum+" บาท");
 }
-
 </script>
 
 </body>
