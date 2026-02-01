@@ -22,12 +22,12 @@ display:inline-block;
 cursor:pointer;
 font-size:14px}
 
-.block.disabled{
-opacity:0.4;
+.active{background:#4CAF50;color:white}
+
+.disabled{
+opacity:.4;
 pointer-events:none;
 }
-
-.active{background:#4CAF50;color:white}
 
 button{
 width:100%;
@@ -75,9 +75,9 @@ let cart=[];
 const box=document.getElementById("list");
 
 menus.forEach(m=>{
-let isOreo = m[0]=="โอริโอ้นมสดปั่น";
+ let disable = m[0]=="โอริโอ้นมสดปั่น";
 
-box.innerHTML+=`
+ box.innerHTML+=`
 <div class="card">
 <div class="menu" onclick="toggle(this)">
 <img src="https://picsum.photos/200?${m[0]}">
@@ -87,13 +87,14 @@ box.innerHTML+=`
 <div class="panel">
 
 <b>ความหวาน</b><br>
-${["0%","25%","50%","75%","100%","125%"]
+${["0%","25%","50%","75%","100%"]
 .map(x=>`<span class="block sweet" onclick="pick(this)">${x}</span>`).join("")}
 
 <br><br><b>ชนิด</b><br>
-<span class="block type" onclick="pick(this)">เย็น</span>
-<span class="block type ${isOreo?"disabled":""}" onclick="pick(this)">แยกน้ำ</span>
-<span class="block type ${isOreo?"disabled":""}" onclick="pick(this)">ปั่น +5</span>
+
+<span class="block type">เย็น</span>
+<span class="block type ${disable?'disabled':''}">แยกน้ำ</span>
+<span class="block type ${disable?'disabled':''}">ปั่น +5</span>
 
 <button onclick="add('${m[0]}',${m[1]},this)">เพิ่มลงตะกร้า</button>
 </div>
@@ -101,23 +102,29 @@ ${["0%","25%","50%","75%","100%","125%"]
 });
 
 function toggle(e){
- let p=e.nextElementSibling;
+ let card = e.parentElement;
+ let panel = e.nextElementSibling;
+ let open = panel.style.display=="block";
 
- document.querySelectorAll(".panel").forEach(x=>{
-   if(x!==p) x.style.display="none";
- });
+ document.querySelectorAll(".panel").forEach(p=>p.style.display="none");
 
- p.style.display="block";
-
- setTimeout(()=>{
-   p.scrollIntoView({behavior:"smooth",block:"start"});
- },100);
+ if(!open){
+   panel.style.display="block";
+   setTimeout(()=>{
+     card.scrollIntoView({behavior:"smooth",block:"start"});
+   },100);
+ }
 }
 
 function pick(el){
- let g=el.classList.contains("sweet")?"sweet":"type";
- el.parentElement.querySelectorAll("."+g)
+ if(el.classList.contains("disabled")) return;
+
+ let group = el.classList.contains("sweet")?"sweet":"type";
+ let parent = el.parentElement;
+
+ parent.querySelectorAll("."+group)
  .forEach(x=>x.classList.remove("active"));
+
  el.classList.add("active");
 }
 
@@ -126,18 +133,18 @@ function add(name,price,b){
  let s=p.querySelector(".sweet.active");
  let t=p.querySelector(".type.active");
 
- if(!s || !t){
-   alert("กรุณาเลือกความหวานและชนิดก่อน");
+ if(!s||!t){
+   alert("เลือกความหวานและชนิดก่อน");
    return;
  }
 
- let extra = t.innerText.includes("ปั่น") ? 5 : 0;
+ let extra = t.innerText.includes("ปั่น")?5:0;
 
  cart.push({
-   name,
-   sweet:s.innerText,
-   type:t.innerText,
-   price:price+extra
+  name,
+  sweet:s.innerText,
+  type:t.innerText,
+  price:price+extra
  });
 
  document.getElementById("count").innerText=cart.length;
@@ -147,7 +154,7 @@ function showCart(){
  let sum=0,msg="";
  cart.forEach(i=>{
    sum+=i.price;
-   msg+=`${i.name} ${i.sweet}% ${i.type} ${i.price}฿\n`;
+   msg+=`${i.name} ${i.sweet} ${i.type} ${i.price}฿\n`;
  });
  alert(msg+"\nรวม "+sum+" บาท");
 }
