@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
 <title>ร้านเครื่องดื่ม</title>
 
 <style>
@@ -99,7 +98,7 @@ ${["0% ไม่หวาน","25% หวานน้อย","50% กลาง",
 
 <br><br><b>ชนิด</b><br>
 
-<span class="block type active">เย็น</span>
+<span class="block type">เย็น</span>
 <span class="block type ${oreo?"disabled":""}" ${oreo?"":"onclick='pick(this)'"}>แยกน้ำ</span>
 <span class="block type ${oreo?"disabled":""}" ${oreo?"":"onclick='pick(this)'"}>ปั่น +5</span>
 
@@ -130,7 +129,10 @@ function add(name,price,b,oreo){
  let sweet=p.querySelector(".sweet.active");
  let type=p.querySelector(".type.active");
 
- if(!sweet){alert("เลือกความหวานก่อน");return;}
+ if(!sweet || !type){
+  alert("กรุณาเลือกความหวานและชนิดก่อน");
+  return;
+ }
 
  let extra = (!oreo && type.innerText.includes("ปั่น")) ? 5 : 0;
 
@@ -151,8 +153,7 @@ function update(){
 }
 
 function showCart(){
- let txt="";
- let sum=0;
+ let txt="",sum=0;
  cart.forEach(i=>{
   sum+=i.price;
   txt+=`${i.name} | ${i.sweet} | ${i.type} | ${i.price}฿\n`;
