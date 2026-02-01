@@ -2,244 +2,219 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>ร้านริมทุ่ง</title>
 
 <style>
 body{
-font-family:sans-serif;
-background:#f2f2f2;
 margin:0;
-padding-top:90px;
+font-family:sans-serif;
+background:#f4f4f4;
 }
 
-.header{
-position:fixed;
+header{
+position:sticky;
 top:0;
-width:100%;
-background:linear-gradient(135deg,#4CAF50,#8BC34A);
+background:linear-gradient(135deg,#2ecc71,#27ae60);
 color:white;
+padding:15px;
 text-align:center;
-padding:18px 10px;
 font-size:26px;
 font-weight:bold;
-box-shadow:0 4px 8px rgba(0,0,0,.3);
-border-radius:0 0 20px 20px;
-}
-
-.sub{
-font-size:14px;
-opacity:.9;
-}
-
-.card{
-background:white;
-margin:12px;
-border-radius:16px;
-overflow:hidden;
+z-index:1000;
+box-shadow:0 2px 5px rgba(0,0,0,.2);
 }
 
 .menu{
-display:flex;
-align-items:center;
-padding:12px;
-cursor:pointer;
+padding:10px;
 }
 
-.menu img{
-width:70px;
-height:70px;
+.item{
+background:white;
+margin-bottom:10px;
 border-radius:12px;
-object-fit:cover;
+overflow:hidden;
+box-shadow:0 2px 6px rgba(0,0,0,.15);
 }
 
-.menu div{
-margin-left:10px;
-flex:1;
-}
-
-.panel{
-display:none;
-padding:12px;
-border-top:1px solid #ddd;
-}
-
-.block{
-border:1px solid #aaa;
-padding:8px 14px;
-border-radius:20px;
-margin:5px;
-display:inline-block;
+.item-header{
+padding:15px;
+font-size:20px;
 cursor:pointer;
+background:#fff;
 }
 
-.block.active{
-background:#4CAF50;
+.slide{
+max-height:0;
+overflow:hidden;
+transition:.4s ease;
+padding:0 15px;
+}
+
+.slide.active{
+max-height:400px;
+padding-bottom:15px;
+}
+
+.section{
+margin-top:10px;
+}
+
+.options{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+}
+
+.option{
+padding:10px 15px;
+border-radius:20px;
+border:2px solid #27ae60;
+color:#27ae60;
+cursor:pointer;
+transition:.2s;
+}
+
+.option.active{
+background:#27ae60;
 color:white;
-border-color:#4CAF50;
 }
 
-.block.disabled{
-opacity:.4;
-pointer-events:none;
-}
-
-button{
+.add{
+margin-top:15px;
 width:100%;
-padding:14px;
-border:none;
-border-radius:14px;
-background:#2196F3;
-color:white;
-font-size:16px;
-margin-top:12px;
-}
-
-.cart{
-position:fixed;
-bottom:0;
-width:100%;
-background:black;
-color:white;
-text-align:center;
 padding:12px;
+border:none;
+border-radius:10px;
+font-size:18px;
+background:#27ae60;
+color:white;
+cursor:pointer;
 }
 </style>
 </head>
 
 <body>
 
-<div class="header">
-ร้านริมทุ่ง
-<div class="sub">สั่งง่าย สดชื่นทุกแก้ว</div>
+<header>🌾 ร้านริมทุ่ง</header>
+
+<div class="menu">
+
+<div class="item">
+<div class="item-header">🍏 แอปเปิ้ลเขียว</div>
+<div class="slide">
+<strong>ความหวาน</strong>
+<div class="options sweet">
+<div class="option">25%</div>
+<div class="option">50%</div>
+<div class="option">75%</div>
+<div class="option">100%</div>
 </div>
 
-<div id="list"></div>
+<div class="section">
+<strong>ชนิด</strong>
+<div class="options type">
+<div class="option">ปั่น</div>
+<div class="option">แยกน้ำ</div>
+</div>
+</div>
 
-<div class="cart" onclick="showCart()">
-🧺 ตะกร้า (<span id="count">0</span>)
+<button class="add">เพิ่มลงตะกร้า</button>
+</div>
+</div>
+
+<div class="item">
+<div class="item-header">🍫 Oreo</div>
+<div class="slide">
+<strong>ความหวาน</strong>
+<div class="options sweet">
+<div class="option">25%</div>
+<div class="option">50%</div>
+<div class="option">75%</div>
+<div class="option">100%</div>
+</div>
+
+<div class="section">
+<strong>ชนิด</strong>
+<div class="options type">
+<div class="option">ปิดปั่น</div>
+<div class="option">แยกน้ำ</div>
+</div>
+</div>
+
+<button class="add">เพิ่มลงตะกร้า</button>
+</div>
+</div>
+
+<div class="item">
+<div class="item-header">🍓 สตรอว์เบอร์รี่</div>
+<div class="slide">
+<strong>ความหวาน</strong>
+<div class="options sweet">
+<div class="option">25%</div>
+<div class="option">50%</div>
+<div class="option">75%</div>
+<div class="option">100%</div>
+</div>
+
+<div class="section">
+<strong>ชนิด</strong>
+<div class="options type">
+<div class="option">ปั่น</div>
+<div class="option">แยกน้ำ</div>
+</div>
+</div>
+
+<button class="add">เพิ่มลงตะกร้า</button>
+</div>
+</div>
+
 </div>
 
 <script>
-const menus=[
-["ชาเขียว",25],["ชาไทย",25],["ชาดำเย็น",25],
-["โอเลี้ยง",25],["โอเลี้ยงยกล้อ",25],
-["กาแฟเนส",25],["กาแฟดำ",25],
-["เผือก",25],["แคนตาลูป",25],["โอวัลติน",25],
-["นมสด",25],["โอริโอ้นมสดปั่น",30],
-["โกโก้",25],["แดงโซดา",25],["แดงโซดามะนาว",25],
-["เขียวโซดา",25],["เขียวโซดามะนาว",25],
-["บลูฮาวาย",25],["บลูฮาวายโซดา",25],
-["แอปเปิ้ลเขียว",25],["แอปเปิ้ลเขียวโซดา",25],
-["มะพร้าว",25],["มะพร้าวนมสด",25],
-["สตอเบอรี่",25],["สตอเบอรี่โซดา",25]
-];
+let openSlide = null;
 
-const sweets=[
-"0% ไม่หวาน","25% หวานน้อย","50% หวานกลาง",
-"75% หวานค่อนข้างหวาน","100% หวานปกติ","125% หวานมาก"
-];
+document.querySelectorAll('.item-header').forEach(header=>{
+header.onclick=()=>{
+let slide = header.nextElementSibling;
 
-let cart=[];
-const box=document.getElementById("list");
-
-menus.forEach(m=>{
-const isOreo=m[0]==="โอริโอ้นมสดปั่น";
-
-box.innerHTML+=`
-<div class="card">
-<div class="menu" onclick="toggleMenu(this)">
-<img src="https://picsum.photos/200?${Math.random()}">
-<div><b>${m[0]}</b><br>${m[1]} บาท</div>
-</div>
-
-<div class="panel">
-
-<b>ความหวาน</b><br>
-${sweets.map(x=>`<span class="block sweet" onclick="pickSweet(this)">${x}</span>`).join("")}
-
-<br><br><b>ชนิด</b><br>
-
-<span class="block type" onclick="pickType(this)">เย็น</span>
-<span class="block type ${isOreo?'disabled':''}" ${isOreo?'':'onclick="pickType(this)"'}>แยกน้ำ</span>
-<span class="block type ${isOreo?'disabled':''}" ${isOreo?'':'onclick="pickType(this)"'}>ปั่น +5</span>
-
-<button onclick="addItem(this,'${m[0]}',${m[1]})">เพิ่มลงตะกร้า</button>
-</div>
-</div>`;
-});
-
-function clearPanel(panel){
-panel.querySelectorAll(".block").forEach(b=>b.classList.remove("active"));
+if(openSlide && openSlide!==slide){
+reset(openSlide);
+openSlide.classList.remove('active');
 }
 
-function toggleMenu(menu){
-document.querySelectorAll(".panel").forEach(p=>{
-if(p!==menu.nextElementSibling){
-clearPanel(p);
-p.style.display="none";
+slide.classList.toggle('active');
+openSlide = slide.classList.contains('active') ? slide : null;
 }
 });
 
-const panel=menu.nextElementSibling;
-
-if(panel.style.display==="block"){
-clearPanel(panel);
-panel.style.display="none";
-}else{
-panel.style.display="block";
-menu.scrollIntoView({behavior:"smooth",block:"start"});
-}
-}
-
-function pickSweet(el){
-const panel=el.closest(".panel");
-if(el.classList.contains("active")){
-el.classList.remove("active");
-return;
-}
-panel.querySelectorAll(".sweet").forEach(x=>x.classList.remove("active"));
-el.classList.add("active");
-}
-
-function pickType(el){
-if(el.classList.contains("disabled")) return;
-const panel=el.closest(".panel");
-if(el.classList.contains("active")){
-el.classList.remove("active");
-return;
-}
-panel.querySelectorAll(".type").forEach(x=>x.classList.remove("active"));
-el.classList.add("active");
-}
-
-function addItem(btn,name,price){
-const panel=btn.parentElement;
-const sweet=panel.querySelector(".sweet.active");
-const type=panel.querySelector(".type.active");
-
-if(!sweet||!type){
-alert("เลือกความหวานและชนิดก่อนครับ");
-return;
-}
-
-let extra=type.innerText.includes("ปั่น")?5:0;
-
-cart.push({name,sweet:sweet.innerText,type:type.innerText,price:price+extra});
-document.getElementById("count").innerText=cart.length;
-
-clearPanel(panel);
-panel.style.display="none";
-}
-
-function showCart(){
-let sum=0,msg="";
-cart.forEach(i=>{
-sum+=i.price;
-msg+=`${i.name} | ${i.sweet} | ${i.type} = ${i.price}฿\n`;
+function setup(group){
+group.querySelectorAll('.option').forEach(opt=>{
+opt.onclick=()=>{
+opt.classList.toggle('active');
+group.querySelectorAll('.option').forEach(o=>{
+if(o!==opt) o.classList.remove('active');
 });
-alert(msg+"\nรวม "+sum+" บาท");
+};
+});
 }
+
+document.querySelectorAll('.sweet').forEach(setup);
+document.querySelectorAll('.type').forEach(setup);
+
+function reset(slide){
+slide.querySelectorAll('.option').forEach(o=>o.classList.remove('active'));
+}
+
+document.querySelectorAll('.add').forEach(btn=>{
+btn.onclick=()=>{
+let slide = btn.closest('.slide');
+reset(slide);
+slide.classList.remove('active');
+openSlide=null;
+};
+});
 </script>
 
 </body>
