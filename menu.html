@@ -3,47 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-
 <title>ร้านเครื่องดื่ม</title>
 
 <style>
-body{
-font-family:sans-serif;
-background:#f2f2f2;
-margin:0;
-}
+body{font-family:sans-serif;background:#f2f2f2;margin:0}
+.card{background:#fff;margin:12px;border-radius:16px;overflow:hidden}
+.menu{display:flex;align-items:center;padding:12px;cursor:pointer}
+.menu img{width:70px;height:70px;border-radius:12px;object-fit:cover}
+.menu div{margin-left:10px;flex:1}
 
-.card{
-background:#fff;
-margin:12px;
-border-radius:16px;
-overflow:hidden;
-}
-
-.menu{
-display:flex;
-align-items:center;
-padding:12px;
-cursor:pointer;
-}
-
-.menu img{
-width:70px;
-height:70px;
-border-radius:12px;
-object-fit:cover;
-}
-
-.menu div{
-margin-left:10px;
-flex:1;
-}
-
-.panel{
-display:none;
-padding:12px;
-border-top:1px solid #ddd;
-}
+.panel{display:none;padding:12px;border-top:1px solid #ddd}
 
 .block{
 border:1px solid #aaa;
@@ -51,14 +20,14 @@ padding:8px 14px;
 border-radius:20px;
 margin:5px;
 display:inline-block;
-font-size:14px;
 cursor:pointer;
+font-size:14px
 }
 
 .block.active{
 background:#4CAF50;
-color:#fff;
-border-color:#4CAF50;
+color:white;
+border-color:#4CAF50
 }
 
 button{
@@ -67,19 +36,19 @@ padding:14px;
 border:none;
 border-radius:14px;
 background:#2196F3;
-color:#fff;
+color:white;
 font-size:16px;
-margin-top:12px;
+margin-top:12px
 }
 
 .cart{
 position:fixed;
 bottom:0;
 width:100%;
-background:#000;
-color:#fff;
-padding:12px;
+background:black;
+color:white;
 text-align:center;
+padding:12px
 }
 </style>
 </head>
@@ -108,7 +77,7 @@ const menus=[
 ["สตอเบอรี่",25],["สตอเบอรี่โซดา",25]
 ];
 
-const sweetList=[
+const sweets=[
 "0% ไม่หวาน","25% หวานน้อย","50% หวานกลาง",
 "75% หวานค่อนข้างหวาน","100% หวานปกติ","125% หวานมาก"
 ];
@@ -119,7 +88,7 @@ const box=document.getElementById("list");
 menus.forEach(m=>{
 box.innerHTML+=`
 <div class="card">
-<div class="menu" onclick="toggle(this)">
+<div class="menu" onclick="toggleMenu(this)">
 <img src="https://picsum.photos/200?${m[0]}">
 <div><b>${m[0]}</b><br>${m[1]} บาท</div>
 </div>
@@ -127,23 +96,25 @@ box.innerHTML+=`
 <div class="panel">
 
 <b>ความหวาน</b><br>
-${sweetList.map(x=>`<span class="block sweet" onclick="pickSweet(this)">${x}</span>`).join("")}
+${sweets.map(x=>`<span class="block sweet" onclick="pickSweet(this)">${x}</span>`).join("")}
 
-<br><br>
-<b>ชนิด</b><br>
+<br><br><b>ชนิด</b><br>
 <span class="block type" onclick="pickType(this)">เย็น</span>
 <span class="block type" onclick="pickType(this)">แยกน้ำ</span>
 <span class="block type" onclick="pickType(this)">ปั่น +5</span>
 
 <button onclick="add(this,'${m[0]}',${m[1]})">เพิ่มลงตะกร้า</button>
-
 </div>
 </div>`;
 });
 
-function toggle(menu){
+function toggleMenu(menu){
+document.querySelectorAll(".panel").forEach(p=>{
+if(p!==menu.nextElementSibling) p.style.display="none";
+});
+
 const panel=menu.nextElementSibling;
-panel.style.display = panel.style.display==="block" ? "none":"block";
+panel.style.display = panel.style.display==="block" ? "none" : "block";
 
 if(panel.style.display==="block"){
 menu.scrollIntoView({behavior:"smooth",block:"start"});
@@ -152,24 +123,35 @@ menu.scrollIntoView({behavior:"smooth",block:"start"});
 
 function pickSweet(el){
 const panel=el.closest(".panel");
+
+if(el.classList.contains("active")){
+el.classList.remove("active");
+return;
+}
+
 panel.querySelectorAll(".sweet").forEach(x=>x.classList.remove("active"));
 el.classList.add("active");
 }
 
 function pickType(el){
 const panel=el.closest(".panel");
+
+if(el.classList.contains("active")){
+el.classList.remove("active");
+return;
+}
+
 panel.querySelectorAll(".type").forEach(x=>x.classList.remove("active"));
 el.classList.add("active");
 }
 
 function add(btn,name,price){
 const panel=btn.parentElement;
-
 const sweet=panel.querySelector(".sweet.active");
 const type=panel.querySelector(".type.active");
 
 if(!sweet || !type){
-alert("กรุณาเลือกความหวานและชนิดก่อน");
+alert("เลือกความหวานและชนิดก่อนครับ");
 return;
 }
 
