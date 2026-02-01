@@ -2,46 +2,49 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ร้านริมทุ่ง</title>
 
 <style>
+*{box-sizing:border-box}
 body{
+margin:0;
 font-family:sans-serif;
 background:#f2f2f2;
-margin:0;
-padding-top:110px;
+padding-top:95px;
 padding-bottom:90px;
 }
 
-/* ===== HEADER FIX ===== */
+/* ===== FIXED HEADER ===== */
 .header{
 position:fixed;
 top:0;
 left:0;
 right:0;
-z-index:999;
-background:linear-gradient(135deg,#4CAF50,#8BC34A);
+z-index:1000;
+background:linear-gradient(135deg,#43a047,#8bc34a);
 color:white;
 text-align:center;
-padding:18px;
-font-size:26px;
-font-weight:bold;
+padding:16px 10px;
 box-shadow:0 4px 8px rgba(0,0,0,.3);
 }
 
-.sub{
-font-size:14px;
+.header h1{
+margin:0;
+font-size:26px;
+}
+
+.header small{
 opacity:.9;
 }
 
-/* ===== MENU CARD ===== */
+/* ===== MENU ===== */
 .card{
 background:white;
 margin:12px;
 border-radius:16px;
 overflow:hidden;
-box-shadow:0 3px 6px rgba(0,0,0,.1);
+box-shadow:0 3px 6px rgba(0,0,0,.15);
 }
 
 .menu{
@@ -59,7 +62,7 @@ object-fit:cover;
 }
 
 .menu div{
-margin-left:10px;
+margin-left:12px;
 flex:1;
 }
 
@@ -69,7 +72,7 @@ padding:12px;
 border-top:1px solid #ddd;
 }
 
-/* ===== BUTTON BLOCK ===== */
+/* ===== SELECT ===== */
 .block{
 border:1px solid #aaa;
 padding:8px 14px;
@@ -90,6 +93,7 @@ opacity:.4;
 pointer-events:none;
 }
 
+/* ===== BUTTON ===== */
 button{
 width:100%;
 padding:14px;
@@ -101,7 +105,7 @@ font-size:16px;
 margin-top:12px;
 }
 
-/* ===== CART FIX ===== */
+/* ===== CART ===== */
 .cart{
 position:fixed;
 bottom:0;
@@ -112,7 +116,7 @@ color:white;
 text-align:center;
 padding:14px;
 font-size:18px;
-z-index:999;
+z-index:1000;
 }
 </style>
 </head>
@@ -120,8 +124,8 @@ z-index:999;
 <body>
 
 <div class="header">
-ร้านริมทุ่ง
-<div class="sub">สั่งง่าย สดชื่นทุกแก้ว</div>
+<h1>ร้านริมทุ่ง</h1>
+<small>สดชื่นทุกแก้ว</small>
 </div>
 
 <div id="list"></div>
@@ -135,8 +139,9 @@ const menus=[
 ["ชาเขียว",25],["ชาไทย",25],["ชาดำเย็น",25],
 ["โอเลี้ยง",25],["โอเลี้ยงยกล้อ",25],
 ["กาแฟเนส",25],["กาแฟดำ",25],
-["เผือก",25],["แคนตาลูป",25],["โอวัลติน",25],
-["นมสด",25],["โอริโอ้นมสดปั่น",30],
+["เผือก",25],["แคนตาลูป",25],
+["โอวัลติน",25],["นมสด",25],
+["โอริโอ้นมสดปั่น",30],
 ["โกโก้",25],["แดงโซดา",25],["แดงโซดามะนาว",25],
 ["เขียวโซดา",25],["เขียวโซดามะนาว",25],
 ["บลูฮาวาย",25],["บลูฮาวายโซดา",25],
@@ -151,12 +156,12 @@ const sweets=[
 ];
 
 let cart=[];
-const box=document.getElementById("list");
+const list=document.getElementById("list");
 
 menus.forEach(m=>{
-const isOreo=m[0]==="โอริโอ้นมสดปั่น";
+const oreo=m[0]==="โอริโอ้นมสดปั่น";
 
-box.innerHTML+=`
+list.innerHTML+=`
 <div class="card">
 <div class="menu" onclick="toggleMenu(this)">
 <img src="https://picsum.photos/200?${Math.random()}">
@@ -164,23 +169,21 @@ box.innerHTML+=`
 </div>
 
 <div class="panel">
-
 <b>ความหวาน</b><br>
-${sweets.map(x=>`<span class="block sweet" onclick="pick(this,'sweet')">${x}</span>`).join("")}
+${sweets.map(s=>`<span class="block sweet" onclick="pick(this,'sweet')">${s}</span>`).join("")}
 
 <br><br><b>ชนิด</b><br>
-
 <span class="block type" onclick="pick(this,'type')">เย็น</span>
-<span class="block type ${isOreo?'disabled':''}" onclick="pick(this,'type')">แยกน้ำ</span>
-<span class="block type ${isOreo?'disabled':''}" onclick="pick(this,'type')">ปั่น +5</span>
+<span class="block type ${oreo?'disabled':''}" onclick="pick(this,'type')">แยกน้ำ</span>
+<span class="block type ${oreo?'disabled':''}" onclick="pick(this,'type')">ปั่น +5</span>
 
 <button onclick="addItem(this,'${m[0]}',${m[1]})">เพิ่มลงตะกร้า</button>
 </div>
 </div>`;
 });
 
-function reset(panel){
-panel.querySelectorAll(".block").forEach(b=>{
+function reset(p){
+p.querySelectorAll(".block").forEach(b=>{
 if(!b.classList.contains("disabled")) b.classList.remove("active");
 });
 }
@@ -198,17 +201,15 @@ const panel=menu.nextElementSibling;
 if(panel.style.display==="block"){
 reset(panel);
 panel.style.display="none";
-}else{
+return;
+}
+
 panel.style.display="block";
 
-const headerHeight=document.querySelector(".header").offsetHeight;
-const y=panel.getBoundingClientRect().top+window.pageYOffset-headerHeight-10;
+const headerH=document.querySelector(".header").offsetHeight;
+const y=menu.getBoundingClientRect().top+window.pageYOffset-headerH-10;
 
-window.scrollTo({
-top:y,
-behavior:"smooth"
-});
-}
+window.scrollTo({top:y,behavior:"smooth"});
 }
 
 function pick(el,type){
@@ -221,7 +222,7 @@ el.classList.remove("active");
 return;
 }
 
-panel.querySelectorAll("."+type).forEach(x=>x.classList.remove("active"));
+panel.querySelectorAll("."+type).forEach(b=>b.classList.remove("active"));
 el.classList.add("active");
 }
 
